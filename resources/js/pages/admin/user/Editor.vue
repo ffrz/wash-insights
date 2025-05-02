@@ -1,7 +1,7 @@
 <script setup>
 import { handleSubmit } from "@/helpers/client-req-handler";
 import { create_options } from "@/helpers/utils";
-import { validateUsername, validateEmail } from "@/helpers/validations";
+import { validateUsername } from "@/helpers/validations";
 import { router, useForm, usePage } from "@inertiajs/vue3";
 
 const roles = create_options(window.CONSTANTS.USER_ROLES);
@@ -11,7 +11,6 @@ const form = useForm({
   id: page.props.data.id,
   name: page.props.data.name,
   username: page.props.data.username,
-  email: page.props.data.email,
   password: "",
   role: !!page.props.data.role ? page.props.data.role : roles[0].value,
   active: !!page.props.data.active,
@@ -41,9 +40,6 @@ const submit = () =>
                   (val) => (val && val.length > 0) || 'ID Pengguna harus diisi.',
                   (val) => validateUsername(val) || 'ID Pengguna tidak valid.'
                 ]" />
-              <q-input v-model.trim="form.email" type="email" label="Email" lazy-rules :disable="form.processing"
-                :error="!!form.errors.email" :error-message="form.errors.email"
-                :rules="[(val) => validateEmail(val) || 'Email harus valid.']" />
               <q-input v-model="form.password" type="password" label="Kata Sandi" lazy-rules :disable="form.processing"
                 :error="!!form.errors.password" :error-message="form.errors.password" />
               <q-select v-model="form.role" label="Hak Akses" :options="roles" map-options emit-value lazy-rules

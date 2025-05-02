@@ -54,13 +54,6 @@ const columns = [
     sortable: true,
   },
   {
-    name: "email",
-    label: "Email",
-    field: "email",
-    align: "left",
-    sortable: true,
-  },
-  {
     name: "role",
     label: "Hak Akses",
     field: "role",
@@ -202,15 +195,11 @@ const onRowClicked = (row) => router.get(route("admin.user.detail", row.id));
               <div>{{ props.row.username }}</div>
               <template v-if="!$q.screen.gt.sm">
                 <div><q-icon name="person"/> {{ props.row.name }}</div>
-                <div><q-icon name="email"/> {{ props.row.email }}</div>
                 <div class="elipsis" style="max-width: 200px;"><q-icon name="group"/> <span>{{ $CONSTANTS.USER_ROLES[props.row.role] }}</span></div>
               </template>
             </q-td>
             <q-td key="name" :props="props">
               {{ props.row.name }}
-            </q-td>
-            <q-td key="email" :props="props">
-              <div class="elipsis" style="max-width: 200px;">{{ props.row.email }}</div>
             </q-td>
             <q-td key="role" :props="props" align="center">
               <span>{{ $CONSTANTS.USER_ROLES[props.row.role] }}</span>

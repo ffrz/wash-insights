@@ -36,7 +36,6 @@ class UserController extends Controller
 
         $q = User::query();
         $q->orderBy($orderBy, $orderType);
-        $q->where('company_id', Auth::user()->company->id);
 
         if (!empty($filter['role'] && $filter['role'] != 'all')) {
             $q->where('role', '=', $filter['role']);
@@ -49,7 +48,6 @@ class UserController extends Controller
         if (!empty($filter['search'])) {
             $q->where(function ($query) use ($filter) {
                 $query->where('name', 'like', '%' . $filter['search'] . '%');
-                $query->orWhere('email', 'like', '%' . $filter['search'] . '%');
             });
         }
 
@@ -88,25 +86,22 @@ class UserController extends Controller
     {
         $rules = [
             'name' => 'required|max:255',
-            'email' => 'required|email|min:3|max:100',
             'password' => 'required|min:5|max:40',
             'role' => 'required',
         ];
 
         $user = null;
         $message = '';
-        $fields = ['name', 'username', 'email', 'role', 'active'];
+        $fields = ['name', 'username', 'role', 'active'];
         $password = $request->get('password');
-        $companyId = Auth::user()->company_id;
         if (!$request->id) {
-            // username harus unik untuk masing-masing company_id
-            $rules['username'] = "required|alpha_num|max:255|unique:users,username,NULL,id,company_id,{$companyId}";
+            // username harus unik
+            $rules['username'] = "required|alpha_num|max:255|unique:users,username,NULL,id";
             $request->validate($rules);
             $user = new User();
-            $user->company_id = $companyId;
         } else {
-            // username harus unik untuk masing-masing company_id, exclude id
-            $rules['username'] = "required|alpha_num|max:255|unique:users,username,{$request->id},id,company_id,{$companyId}";
+            // username harus unik, exclude id
+            $rules['username'] = "required|alpha_num|max:255|unique:users,username,{$request->id},id";
             if (empty($request->get('password'))) {
                 // kalau password tidak diisi, skip validation dan jangan update password
                 unset($rules['password']);
@@ -130,12 +125,6 @@ class UserController extends Controller
     public function delete($id)
     {
         $user = User::findOrFail($id);
-
-        if ($user->company_id != Auth::user()->company_id) {
-            return response()->json([
-                'message' => 'Akses ditolak, tidak bisa menghapus akun berbeda perusahaan.'
-            ], 403);
-        }
 
         if ($user->id == Auth::user()->id) {
             return response()->json([

@@ -31,11 +31,6 @@ const title = "Rincian Pengguna";
                     <td>{{ page.props.data.name }}</td>
                   </tr>
                   <tr>
-                    <td>Email</td>
-                    <td>:</td>
-                    <td>{{ page.props.data.email }}</td>
-                  </tr>
-                  <tr>
                     <td>Hak Akses</td>
                     <td>:</td>
                     <td>{{ $CONSTANTS.USER_ROLES[page.props.data.role] }}</td>
@@ -66,10 +61,11 @@ const title = "Rincian Pengguna";
                     <td>Terakhir login</td>
                     <td>:</td>
                     <td>
-                      {{
+                      {{ page.props.data.last_login_datetime ?
                         $dayjs(
                           new Date(page.props.data.last_login_datetime)
                         ).format("DD MMMM YY HH:mm:ss")
+                        : "Belum pernah login"
                       }}
                     </td>
                   </tr>
