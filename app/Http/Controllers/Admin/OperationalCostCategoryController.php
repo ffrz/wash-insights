@@ -23,7 +23,6 @@ class OperationalCostCategoryController extends Controller
         $filter = $request->get('filter', []);
 
         $q = OperationalCostCategory::query();
-        $q->where('company_id', Auth::user()->company_id);
 
         if (!empty($filter['search'])) {
             $q->where(function ($q) use ($filter) {
@@ -63,9 +62,7 @@ class OperationalCostCategoryController extends Controller
             'name' => [
                 'required',
                 'max:255',
-                Rule::unique('operational_cost_categories')->where(function ($query) {
-                    return $query->where('company_id', Auth::user()->company_id);
-                })->ignore($request->id), // agar saat update tidak dianggap duplikat sendiri
+                Rule::unique('operational_cost_categories', 'name')->ignore($request->id), // agar saat update tidak dianggap duplikat sendiri
             ],
             'description' => 'nullable|max:1000',
         ];
@@ -78,7 +75,6 @@ class OperationalCostCategoryController extends Controller
 
         if (!$request->id) {
             $item = new OperationalCostCategory();
-            $item->company_id = Auth::user()->company_id;
             $message = 'operational-cost-category-created';
         } else {
             $item = OperationalCostCategory::findOrFail($request->post('id', 0));
