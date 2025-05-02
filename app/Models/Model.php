@@ -14,13 +14,13 @@ class Model extends \Illuminate\Database\Eloquent\Model
 
         static::creating(function ($model) {
             $model->created_datetime = current_datetime();
-            $model->created_by_uid = Auth::user()->id;
+            $model->created_by_uid = Auth::id();
             return true;
         });
 
         static::updating(function ($model) {
             $model->updated_datetime = current_datetime();
-            $model->updated_by_uid = Auth::user()->id;
+            $model->updated_by_uid = Auth::id();
             return true;
         });
     }
