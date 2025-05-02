@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\OperationalCost;
 use App\Models\OperationalCostCategory;
-use App\Models\Technician;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class OperationalCostCategoryController extends Controller
 {
@@ -61,13 +60,19 @@ class OperationalCostCategoryController extends Controller
     public function save(Request $request)
     {
         $rules = [
-            'name' => 'required|max:255',
-            'notes' => 'nullable|max:1000',
+            'name' => [
+                'required',
+                'max:255',
+                Rule::unique('operational_cost_categories')->where(function ($query) {
+                    return $query->where('company_id', Auth::user()->company_id);
+                })->ignore($request->id), // agar saat update tidak dianggap duplikat sendiri
+            ],
+            'description' => 'nullable|max:1000',
         ];
 
         $item = null;
         $message = '';
-        $fields = ['name', 'notes'];
+        $fields = ['name', 'description'];
 
         $request->validate($rules);
 
@@ -81,7 +86,7 @@ class OperationalCostCategoryController extends Controller
         }
 
         $data = $request->only($fields);
-        $data['notes'] = $data['notes'] ?? '';
+        $data['description'] = $data['description'] ?? '';
 
         $item->fill($data);
         $item->save();

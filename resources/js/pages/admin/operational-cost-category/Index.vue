@@ -30,9 +30,9 @@ const columns = [
     sortable: true,
   },
   {
-    name: "notes",
+    name: "description",
     label: "Catatan",
-    field: "notes",
+    field: "description",
     align: "left",
   },
   {
@@ -83,7 +83,7 @@ const computedColumns = computed(() => {
         icon="add"
         dense
         color="primary"
-        @click="router.get(route('admin.operational-cost.add'))"
+        @click="router.get(route('admin.operational-cost-category.add'))"
       />
       <q-btn
         class="q-ml-sm"
@@ -154,11 +154,11 @@ const computedColumns = computed(() => {
             <q-td key="name" :props="props" class="wrap-column">
               {{ props.row.name }}
               <template v-if="!$q.screen.gt.sm">
-                <div v-if="props.row.notes" class="text-grey-8"><q-icon name="notes" /> {{ props.row.notes }}</div>
+                <div v-if="props.row.description" class="text-grey-8"><q-icon name="description" /> {{ props.row.description }}</div>
               </template>
             </q-td>
-            <q-td key="notes" :props="props" class="wrap-column">
-              {{ props.row.notes }}
+            <q-td key="description" :props="props" class="wrap-column">
+              {{ props.row.description }}
             </q-td>
             <q-td key="action" :props="props">
               <div class="flex justify-end">

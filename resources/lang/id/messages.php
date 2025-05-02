@@ -15,9 +15,9 @@ return [
     'service-order-saved' => 'Order Servis #:id telah disimpan.',
     'service-order-deleted' => 'Order Servis #:id telah dihapus.',
 
-    'operational-cost-created' => 'Biaya operasional :description telah dibuat.',
-    'operational-cost-updated' => 'Biaya operasional :description telah diperbarui.',
-    'operational-cost-deleted' => 'Biaya operasional :description telah dihapus.',
+    'operational-cost-created' => 'Biaya operasional :name telah dibuat.',
+    'operational-cost-updated' => 'Biaya operasional :name telah diperbarui.',
+    'operational-cost-deleted' => 'Biaya operasional :name telah dihapus.',
 
     'operational-cost-category-created' => 'Kategori biaya operasional :name telah dibuat.',
     'operational-cost-category-updated' => 'Kategori biaya operasional :name telah diperbarui.',
