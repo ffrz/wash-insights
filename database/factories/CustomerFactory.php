@@ -18,11 +18,9 @@ class CustomerFactory extends Factory
     public function definition(): array
     {
         return [
-            'company_id' => Company::inRandomOrder()->first()->id,
             'name' => $this->faker->name,
             'phone' => $this->faker->phoneNumber,
             'address' => $this->faker->address,
-            'email' => $this->faker->unique()->safeEmail,
             'active' => $this->faker->randomElement([true, false]),
         ];
     }

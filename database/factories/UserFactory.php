@@ -26,11 +26,8 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'company_id' => Company::inRandomOrder()->first()->id,
             'username' => fake()->username(),
             'name' => fake()->name(),
-            'email' => fake()->safeEmail(),
-            'email_verified_at' => now(),
             'password' => static::$defaultPassword,
             'remember_token' => Str::random(10),
             'role' => fake()->randomElement(array_keys(User::Roles)),

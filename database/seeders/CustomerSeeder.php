@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class CustomerSeeder extends Seeder
@@ -13,8 +12,5 @@ class CustomerSeeder extends Seeder
     public function run(): void
     {
         \App\Models\Customer::factory(10)->create();
-        \App\Models\Customer::factory(10)->create([
-            'company_id' => 1,
-        ]);
     }
 }

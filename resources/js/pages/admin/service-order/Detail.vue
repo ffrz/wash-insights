@@ -176,7 +176,7 @@ const tab = ref("main");
                       <td>Teknisi</td>
                       <td>:</td>
                       <td>
-                        <i-link v-if="!!page.props.data.technician" :href="route('admin.technician.detail', {id: page.props.data.technician_id })">
+                        <i-link v-if="!!page.props.data.technician" href="#">
                           {{ page.props.data.technician.name }}
                         </i-link>
                       </td>

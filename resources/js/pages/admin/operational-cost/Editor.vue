@@ -37,7 +37,7 @@ const filterCategories = (val, update) => {
           <q-card square flat bordered class="col">
             <q-card-section class="q-pt-none">
               <input type="hidden" name="id" v-model="form.id" />
-              <q-select v-model="form.category_id" label="Kategori" use-input input-debounce="300" clearable
+              <q-select autofocus v-model="form.category_id" label="Kategori" use-input input-debounce="300" clearable
                 :options="filteredCategories" map-options emit-value @filter="filterCategories" :error="!!form.errors.category_id"
                 :disable="form.processing">
                 <template v-slot:no-option>
@@ -48,7 +48,7 @@ const filterCategories = (val, update) => {
               </q-select>
               <date-picker v-model="form.date" label="Tanggal"
                     :error="!!form.errors.date" :disable="form.processing" />
-              <q-input autofocus v-model.trim="form.description" label="Deskripsi" lazy-rules :error="!!form.errors.description"
+              <q-input v-model.trim="form.description" label="Deskripsi" lazy-rules :error="!!form.errors.description"
                 :disable="form.processing" :error-message="form.errors.description" :rules="[
                   (val) => (val && val.length > 0) || 'Deskripsi harus diisi.',
                 ]" />

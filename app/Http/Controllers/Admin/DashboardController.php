@@ -65,7 +65,7 @@ class DashboardController extends Controller
                 'total_active_bill' => ServiceOrder::totalActiveBill(),
                 'total_active_downpayment' => ServiceOrder::totalActiveDownPayment(),
                 'active_customer_count' => Customer::activeCustomerCount(),
-                'active_technician_count' => Technician::activeTechnicianCount(),
+                'active_technician_count' => 0,
                 'top_customers' => ServiceOrder::topCustomers($start_date, $end_date),
                 'top_technicians' => ServiceOrder::topTechnicians($start_date, $end_date),
                 'chart1_data' => [

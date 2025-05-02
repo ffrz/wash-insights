@@ -209,19 +209,6 @@ onMounted(() => {
               <q-item-label>{{ $t("customers") }}</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item
-            clickable
-            v-ripple
-            :active="$page.url.startsWith('/admin/technicians')"
-            @click="router.get(route('admin.technician.index'))"
-          >
-            <q-item-section avatar>
-              <q-icon name="engineering" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ $t("technicians") }}</q-item-label>
-            </q-item-section>
-          </q-item>
           <q-expansion-item
             v-if="$page.props.auth.user.role == $CONSTANTS.USER_ROLE_ADMIN"
             expand-separator

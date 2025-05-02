@@ -35,8 +35,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $user ? [
                     'id' => $user->id,
-                    'company_id' => $user->company_id,
-                    'company_name' => $user->company->name,
+                    'company_name' => 'Car Wash Insights',
                     'name' => $user->name,
                     'username' => $user->username,
                     'role' => $user->role,

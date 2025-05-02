@@ -18,7 +18,6 @@ class TechnicianFactory extends Factory
     public function definition(): array
     {
         return [
-            'company_id' => 1,
             'user_id' => null,
             'name' => fake()->name(),
             'phone' => fake()->phoneNumber(),

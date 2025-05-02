@@ -5,17 +5,22 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\OperationalCost;
 use App\Models\OperationalCostCategory;
-use App\Models\Technician;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class OperationalCostController extends Controller
 {
+    protected function _categories()
+    {
+        return OperationalCostCategory::where('company_id', Auth::user()->company_id)->get();
+    }
+
     public function index()
     {
+        $categories = OperationalCostCategory::where('company_id', Auth::user()->company_id)->get();
         return inertia('admin/operational-cost/Index', [
-            'categories' => OperationalCostCategory::all(),
+            'categories' => $this->_categories(),
         ]);
     }
 
@@ -58,7 +63,7 @@ class OperationalCostController extends Controller
         $item->id = null;
         return inertia('admin/operational-cost/Editor', [
             'data' => $item,
-            'categories' => OperationalCostCategory::all(),
+            'categories' => $this->_categories(),
         ]);
     }
 
@@ -68,7 +73,7 @@ class OperationalCostController extends Controller
         $item = $id ? OperationalCost::findOrFail($id) : new OperationalCost(['date' => date('Y-m-d')]);
         return inertia('admin/operational-cost/Editor', [
             'data' => $item,
-            'categories' => OperationalCostCategory::all(),
+            'categories' => $this->_categories(),
         ]);
     }
 

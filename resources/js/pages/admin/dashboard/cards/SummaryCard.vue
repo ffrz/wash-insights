@@ -121,7 +121,7 @@ const goToUrl = (url, newFilter) => {
           </div>
           <div class="col-sm-6 col-xs-12">
             <q-item :style="`background-color: #008cff`" class="q-pa-none" clickable
-              @click="$inertia.visit(route('admin.technician.index', { status: 'active' }))">
+              @click="$inertia.visit(route('admin.customer.index', { status: 'active' }))">
               <q-item-section side :style="`background-color: #007bff`" class="q-pa-lg q-mr-none text-white">
                 <q-icon class="material-filled" name="groups_2" color="white" size="24px" />
               </q-item-section>

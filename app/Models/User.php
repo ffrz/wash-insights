@@ -12,14 +12,16 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     public const Role_Admin = 'admin';
-    public const Role_Technician = 'technician';
+    public const Role_Washer = 'washer';
     public const Role_Cashier = 'cashier';
+    public const Role_Owner = 'owner';
 
     // Display role di hardcode saja, tidak diambil dari translations
     public const Roles = [
         self::Role_Admin => 'Administrator',
-        self::Role_Technician => 'Teknisi',
+        self::Role_Washer => 'Washer',
         self::Role_Cashier => 'Kasir',
+        self::Role_Owner => 'Owner',
     ];
 
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -31,10 +33,8 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'company_id',
         'name',
         'username',
-        'email',
         'active',
         'password',
         'role',
@@ -53,8 +53,6 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected $appends = ['company_name'];
-
     /**
      * Get the attributes that should be cast.
      *
@@ -63,19 +61,8 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    public function getCompanyNameAttribute()
-    {
-        return $this->company->name ?? 'No Company';
-    }
-
-    public function company()
-    {
-        return $this->belongsTo(Company::class);
     }
 
     public function setLastLogin()

@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\OperationalCost;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +21,6 @@ class OperationalCostFactory extends Factory
         $randomCategoryId = DB::table('operational_cost_categories')->inRandomOrder()->value('id');
 
         return [
-            'company_id' => 1,
             'category_id' => $randomCategoryId,
             'date' => new Carbon(fake()->dateTimeThisYear()),
             'description' => fake()->sentence(),

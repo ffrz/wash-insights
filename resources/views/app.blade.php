@@ -28,7 +28,8 @@
       ]) ?>;
     window.CONSTANTS.USER_ROLE_ADMIN = "{{ \App\Models\User::Role_Admin }}";
     window.CONSTANTS.USER_ROLE_CASHIER = "{{ \App\Models\User::Role_Cashier }}";
-    window.CONSTANTS.USER_ROLE_TECHNICIAN = "{{ \App\Models\User::Role_Technician }}";
+    window.CONSTANTS.USER_ROLE_WASHER = "{{ \App\Models\User::Role_Washer }}";
+    window.CONSTANTS.USER_ROLE_OWNER = "{{ \App\Models\User::Role_Owner }}";
   </script>
   @routes
   @vite(['resources/js/app.js', 'resources/css/app.css'])

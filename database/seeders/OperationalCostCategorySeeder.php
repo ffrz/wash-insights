@@ -14,37 +14,37 @@ class OperationalCostCategorySeeder extends Seeder
     {
         OperationalCostCategory::factory()->create([
             'name' => 'Listrik',
-            'notes' => 'Biaya Tagihan Listrik',
+            'description' => 'Biaya Tagihan Listrik',
         ]);
 
         OperationalCostCategory::factory()->create([
             'name' => 'PDAM',
-            'notes' => 'Biaya Tagihan PDAM',
+            'description' => 'Biaya Tagihan PDAM',
         ]);
 
         OperationalCostCategory::factory()->create([
             'name' => 'Internet',
-            'notes' => 'Biaya Tagihan Internet',
+            'description' => 'Biaya Tagihan Internet',
         ]);
 
         OperationalCostCategory::factory()->create([
             'name' => 'Pulsa dan Quota',
-            'notes' => 'Biaya pulsa dan Quota',
+            'description' => 'Biaya pulsa dan Quota',
         ]);
 
         OperationalCostCategory::factory()->create([
             'name' => 'ATK',
-            'notes' => 'Biaya ATK',
+            'description' => 'Biaya ATK',
         ]);
 
         OperationalCostCategory::factory()->create([
             'name' => 'Bahan Servis',
-            'notes' => 'Biaya bahan-bahan servis habis pakai',
+            'description' => 'Biaya bahan-bahan servis habis pakai',
         ]);
 
         OperationalCostCategory::factory()->create([
             'name' => 'Alat Servis',
-            'notes' => 'Biaya alat-alat servis non bahan',
+            'description' => 'Biaya alat-alat servis non bahan',
         ]);
     }
 }

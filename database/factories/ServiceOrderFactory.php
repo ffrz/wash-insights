@@ -84,7 +84,7 @@ class ServiceOrderFactory extends Factory
      */
     public function definition(): array
     {
-        $customer = Customer::find(Customer::where('company_id', 1)->pluck('id')->random());
+        $customer = Customer::find(Customer::pluck('id')->random());
         $orderStatus = ServiceOrder::OrderStatus_Open;
         $serviceStatus = $this->faker->randomElement([
             ServiceOrder::ServiceStatus_Received,
@@ -181,7 +181,6 @@ class ServiceOrderFactory extends Factory
         $device = $this->faker->randomElement(static::$devices[$device_type]);
         $problem = $this->faker->randomElement(array_keys(self::$problems[$device_type]));
         return [
-            'company_id' => 1,
             'customer_id' => $customer->id,
 
             'customer_name' => $customer->name,

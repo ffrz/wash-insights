@@ -15,11 +15,8 @@ return new class extends Migration
 
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('company_id');
             $table->string('username');
             $table->string('name');
-            $table->string('email');
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('role', array_keys(User::Roles));
             $table->boolean('active')->default(false);
@@ -28,8 +25,6 @@ return new class extends Migration
             $table->datetime('last_activity_datetime')->nullable()->default(null);
             $table->rememberToken();
             $table->timestamps();
-
-            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

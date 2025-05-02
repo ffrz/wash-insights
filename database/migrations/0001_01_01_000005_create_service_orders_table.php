@@ -14,7 +14,6 @@ return new class extends Migration
     {
         Schema::create('service_orders', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('company_id');
 
             // statuses
             $table->enum('order_status', array_keys(ServiceOrder::OrderStatuses))->default(ServiceOrder::OrderStatus_Open);
@@ -64,9 +63,7 @@ return new class extends Migration
             $table->unsignedBigInteger('technician_id')->nullable(true)->default(null);
             $table->text('notes');
 
-            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('set null');
-            $table->foreign('technician_id')->references('id')->on('technicians')->onDelete('set null');
             $table->foreign('created_by_uid')->references('id')->on('users')->onDelete('set null');
             $table->foreign('closed_by_uid')->references('id')->on('users')->onDelete('set null');
             $table->foreign('updated_by_uid')->references('id')->on('users')->onDelete('set null');

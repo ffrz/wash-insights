@@ -76,7 +76,7 @@ const onFilterChange = () => {
             <top-card class="full-width full-height"
               :items="$page.props.data.top_technicians"
               title="Top 5 Teknisi"
-              route_url="admin.technician.detail"
+              route_url="admin.customer.detail"
             />
           </div>
         </div>

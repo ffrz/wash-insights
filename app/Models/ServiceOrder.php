@@ -70,7 +70,6 @@ class ServiceOrder extends Model
     ];
 
     protected $fillable = [
-        'company_id',
         'customer_id',
         'order_status',
         'service_status',
@@ -115,17 +114,10 @@ class ServiceOrder extends Model
         return $this->belongsTo(Customer::class);
     }
 
-    /**
-     * Get the company that owns the service order.
-     */
-    public function company()
-    {
-        return $this->belongsTo(Company::class);
-    }
 
     public function technician()
     {
-        return $this->belongsTo(Technician::class);
+        return $this->belongsTo(User::class);
     }
 
     public function createdBy()
@@ -146,19 +138,18 @@ class ServiceOrder extends Model
     public static function activeOrderCount()
     {
         return DB::select(
-            "select count(0) as count from service_orders where order_status=? and company_id=?",
-            [self::OrderStatus_Open, Auth::user()->company_id]
+            "select count(0) as count from service_orders where order_status=?",
+            [self::OrderStatus_Open]
         )[0]->count;
     }
 
     public static function receivedOrderCount()
     {
         return DB::select(
-            "select count(0) as count from service_orders where service_status=? and order_status=? and company_id=?",
+            "select count(0) as count from service_orders where service_status=? and order_status=?",
             [
                 self::ServiceStatus_Received,
-                self::OrderStatus_Open,
-                Auth::user()->company_id
+                self::OrderStatus_Open
             ]
         )[0]->count;
     }
@@ -166,8 +157,8 @@ class ServiceOrder extends Model
     public static function inProgressCount()
     {
         return DB::select(
-            "select count(0) as count from service_orders where service_status=? and order_status=? and company_id=?",
-            [self::ServiceStatus_InProgress, self::OrderStatus_Open, Auth::user()->company_id]
+            "select count(0) as count from service_orders where service_status=? and order_status=?",
+            [self::ServiceStatus_InProgress, self::OrderStatus_Open]
         )[0]->count;
     }
 
@@ -177,12 +168,10 @@ class ServiceOrder extends Model
             "select count(0) as count
                 from service_orders
                 where service_status=?
-                    and order_status=?
-                    and company_id=?",
+                    and order_status=?",
             [
                 self::ServiceStatus_Completed,
-                self::OrderStatus_Open,
-                Auth::user()->company_id
+                self::OrderStatus_Open
             ]
         )[0]->count;
     }
@@ -194,14 +183,12 @@ class ServiceOrder extends Model
                 from service_orders
                 where (service_status=? or service_status=?)
                     and payment_status<>?
-                    and order_status=?
-                    and company_id=?",
+                    and order_status=?",
             [
                 self::ServiceStatus_Completed,
                 self::ServiceStatus_Picked,
                 self::PaymentStatus_FullyPaid,
-                self::OrderStatus_Open,
-                Auth::user()->company_id
+                self::OrderStatus_Open
             ]
         )[0]->sum;
     }
@@ -213,14 +200,12 @@ class ServiceOrder extends Model
                 from service_orders
                 where (service_status=? or service_status=?)
                     and payment_status<>?
-                    and order_status=?
-                    and company_id=?",
+                    and order_status=?",
             [
                 self::ServiceStatus_Completed,
                 self::ServiceStatus_Picked,
                 self::PaymentStatus_FullyPaid,
-                self::OrderStatus_Open,
-                Auth::user()->company_id
+                self::OrderStatus_Open
             ]
         )[0]->sum;
     }
@@ -232,14 +217,12 @@ class ServiceOrder extends Model
                 from service_orders
                 where (service_status=? or service_status=?)
                     and payment_status<>?
-                    and order_status=?
-                    and company_id=?",
+                    and order_status=?",
             [
                 self::ServiceStatus_Completed,
                 self::ServiceStatus_Picked,
                 self::PaymentStatus_FullyPaid,
-                self::OrderStatus_Open,
-                Auth::user()->company_id
+                self::OrderStatus_Open
             ]
         )[0]->sum;
     }
@@ -254,7 +237,6 @@ class ServiceOrder extends Model
             JOIN customers c ON so.customer_id = c.id
             WHERE so.order_status = ?
                 AND DATE(so.closed_datetime) BETWEEN ? AND ?
-                AND so.company_id = ?
             GROUP BY c.id, c.name
             ORDER BY total DESC
             LIMIT ?;",
@@ -262,7 +244,6 @@ class ServiceOrder extends Model
                 self::OrderStatus_Closed,
                 $start_date,
                 $end_date,
-                Auth::user()->company_id,
                 $limit,
             ]
         );
@@ -275,18 +256,16 @@ class ServiceOrder extends Model
               t.name AS name,
               SUM(so.total_cost) AS total
             FROM service_orders so
-            JOIN technicians t ON so.technician_id = t.id
+            JOIN users t ON so.technician_id = t.id
             WHERE so.order_status = ?
               AND DATE(so.closed_datetime) BETWEEN ? AND ?
-              AND so.company_id = ?
             GROUP BY t.id, t.name
             ORDER BY total DESC
-            LIMIT ?;",
+            LIMIT ?",
             [
                 self::OrderStatus_Closed,
                 $start_date,
                 $end_date,
-                Auth::user()->company_id,
                 $limit,
             ]
         );
@@ -300,13 +279,11 @@ class ServiceOrder extends Model
                 COUNT(*) AS total_order
             FROM service_orders
             WHERE DATE(created_datetime) BETWEEN ? AND ?
-                AND company_id = ?
             GROUP BY DATE(created_datetime)
             ORDER BY order_date;",
             [
                 $start_date,
                 $end_date,
-                Auth::user()->company_id
             ]
         );
     }
@@ -319,14 +296,12 @@ class ServiceOrder extends Model
                 SUM(total_cost) AS total_order
             FROM service_orders
             WHERE DATE(closed_datetime) BETWEEN ? AND ?
-                AND company_id = ?
                 AND order_status = ?
             GROUP BY DATE(closed_datetime)
             ORDER BY order_date;",
             [
                 $start_date,
                 $end_date,
-                Auth::user()->company_id,
                 self::OrderStatus_Closed,
             ]
         );
@@ -340,14 +315,12 @@ class ServiceOrder extends Model
                 COUNT(*) AS total_order
             FROM service_orders
             WHERE DATE(completed_datetime) BETWEEN ? AND ?
-                AND company_id = ?
                 AND repair_status = ?
             GROUP BY DATE(completed_datetime)
             ORDER BY order_date;",
             [
                 $start_date,
                 $end_date,
-                Auth::user()->company_id,
                 self::RepairStatus_Success
             ]
         );
@@ -361,14 +334,12 @@ class ServiceOrder extends Model
                 COUNT(*) AS total_order
             FROM service_orders
             WHERE DATE(completed_datetime) BETWEEN ? AND ?
-                AND company_id = ?
                 AND repair_status = ?
             GROUP BY DATE(completed_datetime)
             ORDER BY order_date;",
             [
                 $start_date,
                 $end_date,
-                Auth::user()->company_id,
                 self::RepairStatus_Failed
             ]
         );

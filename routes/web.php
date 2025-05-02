@@ -8,12 +8,10 @@ use App\Http\Controllers\Admin\OperationalCostCategoryController;
 use App\Http\Controllers\Admin\OperationalCostController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\ServiceOrderController;
-use App\Http\Controllers\Admin\TechnicianController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Utils\ArtisanCommandController;
 use App\Http\Middleware\Auth;
 use App\Http\Middleware\NonAuthenticated;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -74,17 +72,6 @@ Route::middleware([Auth::class])->group(function () {
             Route::get('detail/{id}', [ServiceOrderController::class, 'detail'])->name('admin.service-order.detail');
             Route::post('save', [ServiceOrderController::class, 'save'])->name('admin.service-order.save');
             Route::post('delete/{id}', [ServiceOrderController::class, 'delete'])->name('admin.service-order.delete');
-        });
-
-        Route::prefix('technicians')->group(function () {
-            Route::get('', [TechnicianController::class, 'index'])->name('admin.technician.index');
-            Route::get('data', [TechnicianController::class, 'data'])->name('admin.technician.data');
-            Route::get('add', [TechnicianController::class, 'editor'])->name('admin.technician.add');
-            Route::get('edit/{id}', [TechnicianController::class, 'editor'])->name('admin.technician.edit');
-            Route::get('duplicate/{id}', [TechnicianController::class, 'duplicate'])->name('admin.technician.duplicate');
-            Route::get('detail/{id}', [TechnicianController::class, 'detail'])->name('admin.technician.detail');
-            Route::post('save', [TechnicianController::class, 'save'])->name('admin.technician.save');
-            Route::post('delete/{id}', [TechnicianController::class, 'delete'])->name('admin.technician.delete');
         });
 
         Route::prefix('operational-cost-categories')->group(function () {

@@ -37,7 +37,6 @@ return [
         'customer_name' => 'Nama Pelanggan',
         'customer_phone' => 'No Telepon',
         'customer_address' => 'Alamat',
-        'company_code' => 'Kode Perusahaan',
         'company_name' => 'Nama Perusahaan',
         'company_phone' => 'No Telepon',
         'company_address' => 'Alamat',

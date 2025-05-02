@@ -9,11 +9,7 @@ class OperationalCostCategory extends Model
     use HasFactory;
 
     protected $fillable = [
-        'company_id', 'name', 'description'
+        'name', 'description'
     ];
 
-    public function company()
-    {
-        return $this->belongsTo(Company::class);
-    }
 }

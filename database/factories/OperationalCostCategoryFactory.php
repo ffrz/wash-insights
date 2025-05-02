@@ -17,9 +17,8 @@ class OperationalCostCategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            'company_id' => 1,
             'name' => fake()->sentence(2),
-            'notes' => fake()->sentence(),
+            'description' => fake()->sentence(),
         ];
     }
 }
