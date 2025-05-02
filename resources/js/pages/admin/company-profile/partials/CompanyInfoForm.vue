@@ -9,9 +9,7 @@ import { ref } from 'vue';
 const nameInputRef = ref();
 const page = usePage();
 const form = useForm({
-  code: page.props.data.code,
   name: page.props.data.name,
-  email: page.props.data.email,
   phone: page.props.data.phone,
   address: page.props.data.address,
 });
@@ -27,12 +25,9 @@ const submit = () =>
       <q-card-section>
         <div class="text-subtitle1 q-my-xs">Profil Perusahaan</div>
         <p class="text-caption text-grey-9">Perbarui profil perusahaan anda.</p>
-        <q-input readonly v-model="form.code" label="Kode Perusahaan" :disable="form.processing" />
         <q-input ref="nameInputRef" v-model.trim="form.name" label="Nama Perusahaan" :disable="form.processing"
           lazy-rules :error="!!form.errors.name" :error-message="form.errors.name"
           :rules="[(val) => (val && val.length > 0) || 'Nama Perusahaan harus diisi.']" />
-        <q-input v-model.trim="form.email" label="Email Perusahaan" :disable="form.processing" lazy-rules
-          :error="!!form.errors.email" :error-message="form.errors.email" />
         <q-input v-model.trim="form.phone" label="No Telepon" :disable="form.processing" lazy-rules
           :error="!!form.errors.phone" :error-message="form.errors.phone" />
         <q-input type="textarea" counter autogrow maxlength="1000" v-model.trim="form.address" label="Alamat Perusahaan"

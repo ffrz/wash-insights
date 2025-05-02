@@ -7,6 +7,8 @@ return [
     'regex' => 'Format :attribute tidak valid.',
     'unique' => ':attribute sudah digunakan.',
     'numeric' => ':attribute sudah digunakan.',
+    'current_password' => ':attribute tidak valid.',
+    'confirmed' => 'Konfirmasi :attribute tidak cocok.',
     'max' => [
         'string' => ':attribute terlalu panjang, maksimal :max karakter.',
     ],
@@ -40,8 +42,7 @@ return [
         'company_name' => 'Nama Perusahaan',
         'company_phone' => 'No Telepon',
         'company_address' => 'Alamat',
-        'password' => 'Kata Sandi',
-        'device' => 'Perangkat',
-        'equipments' => 'Kelengkapan',
+        'password' => 'Kata sandi',
+        'current_password' => 'Kata sandi sekarang',
     ],
 ];

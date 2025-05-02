@@ -9,7 +9,6 @@ const form = useForm({
   name: user.name,
   username: user.username,
   role: window.CONSTANTS.USER_ROLES[user.role],
-  email: user.email,
 });
 
 const submit = () =>
@@ -26,8 +25,6 @@ const submit = () =>
         <q-input v-model.trim="form.name" label="Nama" :disable="form.processing" lazy-rules
           :error="!!form.errors.name" :error-message="form.errors.name"
           :rules="[(val) => (val && val.length > 0) || 'Name harus diisi.']" />
-        <q-input v-model.trim="form.email" label="Email" :disable="form.processing" lazy-rules
-          :error="!!form.errors.email" :error-message="form.errors.email" />
         <q-input readonly v-model="form.role" label="Hak Akses" :disable="form.processing" />
       </q-card-section>
       <q-card-section>

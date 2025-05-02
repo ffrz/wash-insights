@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -35,7 +36,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $user ? [
                     'id' => $user->id,
-                    'company_name' => 'Car Wash Insights',
+                    'company_name' => Setting::value('company_name', 'My Company'),
                     'name' => $user->name,
                     'username' => $user->username,
                     'role' => $user->role,
