@@ -7,18 +7,16 @@ use App\Models\OperationalCost;
 use App\Models\OperationalCostCategory;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class OperationalCostController extends Controller
 {
     protected function _categories()
     {
-        return OperationalCostCategory::where('company_id', Auth::user()->company_id)->get();
+        return OperationalCostCategory::all();
     }
 
     public function index()
     {
-        $categories = OperationalCostCategory::where('company_id', Auth::user()->company_id)->get();
         return inertia('admin/operational-cost/Index', [
             'categories' => $this->_categories(),
         ]);
@@ -31,7 +29,6 @@ class OperationalCostController extends Controller
         $filter = $request->get('filter', []);
 
         $q = OperationalCost::with('category');
-        $q->where('company_id', Auth::user()->company_id);
 
         if (!empty($filter['search'])) {
             $q->where(function ($q) use ($filter) {
@@ -43,9 +40,17 @@ class OperationalCostController extends Controller
         if (!empty($filter['category_id'])) {
             if ($filter['category_id'] === 'null') {
                 $q->whereNull('category_id');
-            }
-            else if ($filter['category_id'] !== 'all') {
+            } else if ($filter['category_id'] !== 'all') {
                 $q->where('category_id', '=', $filter['category_id']);
+            }
+        }
+
+        // Tambahan filter tahun
+        if (!empty($filter['year']) && $filter['year'] !== 'null') {
+            $q->whereYear('date', $filter['year']);
+
+            if (!empty($filter['month']) && $filter['month'] !== 'null') {
+                $q->whereMonth('date', $filter['month']);
             }
         }
 
@@ -95,7 +100,6 @@ class OperationalCostController extends Controller
 
         if (!$request->id) {
             $item = new OperationalCost();
-            $item->company_id = Auth::user()->company_id;
             $message = 'operational-cost-created';
         } else {
             $item = OperationalCost::findOrFail($request->post('id', 0));
@@ -117,11 +121,6 @@ class OperationalCostController extends Controller
         allowed_roles([User::Role_Admin]);
 
         $item = OperationalCost::findOrFail($id);
-        if ($item->company_id != Auth::user()->company_id) {
-            return response()->json([
-                'message' => __('messages.cant-delete-item-with-different-company')
-            ], 403);
-        }
         $item->delete();
 
         return response()->json([
