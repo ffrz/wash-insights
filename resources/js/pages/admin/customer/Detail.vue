@@ -34,11 +34,6 @@ const title = "Rincian Pelanggan";
                       <td>{{ page.props.data.address }}</td>
                     </tr>
                     <tr>
-                      <td>Email</td>
-                      <td>:</td>
-                      <td>{{ page.props.data.email }}</td>
-                    </tr>
-                    <tr>
                       <td>Status</td>
                       <td>:</td>
                       <td>{{ page.props.data.active ? 'Aktif' : 'Tidak Aktif' }}</td>

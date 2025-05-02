@@ -29,7 +29,6 @@ class CustomerController extends Controller
         $filter = $request->get('filter', []);
 
         $q = Customer::query();
-        $q->where('company_id', Auth::user()->company_id);
 
         if (!empty($filter['search'])) {
             $q->where(function ($q) use ($filter) {
@@ -86,7 +85,6 @@ class CustomerController extends Controller
 
         if (!$request->id) {
             $item = new Customer();
-            $item->company_id = Auth::user()->company_id;
             $message = 'customer-created';
         } else {
             $item = Customer::findOrFail($request->post('id', 0));
@@ -104,11 +102,6 @@ class CustomerController extends Controller
         allowed_roles([User::Role_Admin]);
 
         $item = Customer::findOrFail($id);
-        if ($item->company_id != Auth::user()->company_id) {
-            return response()->json([
-                'message' => __('messages.cant-delete-item-with-different-company'),
-            ], 403);
-        }
         $item->delete();
 
         return response()->json([
