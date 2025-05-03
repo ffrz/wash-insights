@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
                 CustomerSeeder::class,
                 WashServiceSeeder::class,
 
-                ServiceOrderSeeder::class,
+                WashOrderSeeder::class,
 
                 OperationalCostCategorySeeder::class,
                 OperationalCostSeeder::class,

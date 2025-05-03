@@ -44,5 +44,7 @@ return [
         'company_address' => 'Alamat',
         'password' => 'Kata sandi',
         'current_password' => 'Kata sandi sekarang',
+        'vehicle_description' => 'Deskripsi Kendaraan',
+        'vehicle_plate_number' => 'Nomor Plat Kendaraan',
     ],
 ];

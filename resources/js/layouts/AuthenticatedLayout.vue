@@ -199,6 +199,19 @@ onMounted(() => {
           <q-item
             clickable
             v-ripple
+            :active="$page.url.startsWith('/admin/wash-orders')"
+            @click="router.get(route('admin.wash-order.index'))"
+          >
+            <q-item-section avatar>
+              <q-icon name="local_car_wash" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Order Cuci</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            clickable
+            v-ripple
             :active="$page.url.startsWith('/admin/customers')"
             @click="router.get(route('admin.customer.index'))"
           >

@@ -20,7 +20,7 @@ class CustomerFactory extends Factory
             'name' => $this->faker->name,
             'phone' => $this->faker->phoneNumber,
             'address' => $this->faker->address,
-            'active' => $this->faker->randomElement([true, false]),
+            'active' => $this->faker->boolean(90)
         ];
     }
 }
