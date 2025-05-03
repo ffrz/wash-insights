@@ -83,7 +83,7 @@ class WashServiceController extends Controller
 
         $item = null;
         $message = '';
-        $fields = ['name', 'description', 'duration', 'price'];
+        $fields = ['name', 'description', 'duration', 'price', 'active'];
 
         $request->validate($rules);
 

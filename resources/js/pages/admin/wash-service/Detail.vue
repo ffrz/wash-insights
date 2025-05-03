@@ -1,8 +1,9 @@
 <script setup>
+import { formatNumber } from "@/helpers/utils";
 import { router, usePage } from "@inertiajs/vue3";
 
 const page = usePage();
-const title = "Rincian Pelanggan";
+const title = "Rincian Layanan";
 
 </script>
 
@@ -15,23 +16,28 @@ const title = "Rincian Pelanggan";
         <div class="row">
           <q-card square flat bordered class="col">
             <q-card-section>
-              <div class="text-subtitle1 text-bold text-grey-8">Info Pelanggan</div>
+              <div class="text-subtitle1 text-bold text-grey-8">Info Layanan</div>
               <table class="detail">
                   <tbody>
                     <tr>
-                      <td style="width:70px">Nama</td>
+                      <td style="width:120px">Nama</td>
                       <td style="width:1px">:</td>
                       <td>{{ page.props.data.name }}</td>
                     </tr>
                     <tr>
-                      <td>Telepon</td>
+                      <td>Deskripsi</td>
                       <td>:</td>
-                      <td>{{ page.props.data.phone }}</td>
+                      <td>{{ page.props.data.description }}</td>
                     </tr>
                     <tr>
-                      <td>Alamat</td>
+                      <td>Harga / Biaya</td>
                       <td>:</td>
-                      <td>{{ page.props.data.address }}</td>
+                      <td>Rp. {{ formatNumber(page.props.data.price) }}</td>
+                    </tr>
+                    <tr>
+                      <td>Perkiraan Durasi</td>
+                      <td>:</td>
+                      <td>{{ formatNumber(page.props.data.duration) }}</td>
                     </tr>
                     <tr>
                       <td>Status</td>
