@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\OperationalCostController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\ServiceOrderController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\WashServiceController;
 use App\Http\Controllers\Utils\ArtisanCommandController;
 use App\Http\Middleware\Auth;
 use App\Http\Middleware\NonAuthenticated;
@@ -61,6 +62,17 @@ Route::middleware([Auth::class])->group(function () {
             Route::get('detail/{id}', [CustomerController::class, 'detail'])->name('admin.customer.detail');
             Route::post('save', [CustomerController::class, 'save'])->name('admin.customer.save');
             Route::post('delete/{id}', [CustomerController::class, 'delete'])->name('admin.customer.delete');
+        });
+
+        Route::prefix('wash-services')->group(function () {
+            Route::get('', [WashServiceController::class, 'index'])->name('admin.wash-service.index');
+            Route::get('data', [WashServiceController::class, 'data'])->name('admin.wash-service.data');
+            Route::get('add', [WashServiceController::class, 'editor'])->name('admin.wash-service.add');
+            Route::get('duplicate/{id}', [WashServiceController::class, 'duplicate'])->name('admin.wash-service.duplicate');
+            Route::get('edit/{id}', [WashServiceController::class, 'editor'])->name('admin.wash-service.edit');
+            Route::get('detail/{id}', [WashServiceController::class, 'detail'])->name('admin.wash-service.detail');
+            Route::post('save', [WashServiceController::class, 'save'])->name('admin.wash-service.save');
+            Route::post('delete/{id}', [WashServiceController::class, 'delete'])->name('admin.wash-service.delete');
         });
 
         Route::prefix('service-orders')->group(function () {

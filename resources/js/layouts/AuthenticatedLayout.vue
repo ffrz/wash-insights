@@ -252,6 +252,21 @@ onMounted(() => {
             :label="$t('settings')"
             :default-opened="$page.url.startsWith('/admin/settings')"
           >
+          <q-item
+              v-if="$page.props.auth.user.role == $CONSTANTS.USER_ROLE_ADMIN"
+              class="subnav"
+              clickable
+              v-ripple
+              :active="$page.url.startsWith('/admin/settings/wash-services')"
+              @click="router.get(route('admin.wash-service.index'))"
+            >
+              <q-item-section avatar>
+                <q-icon name="wash" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>Layanan</q-item-label>
+              </q-item-section>
+            </q-item>
             <q-item
               v-if="$page.props.auth.user.role == $CONSTANTS.USER_ROLE_ADMIN"
               class="subnav"
