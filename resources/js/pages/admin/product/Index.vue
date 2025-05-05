@@ -2,7 +2,7 @@
 import { computed, onMounted, reactive, ref } from "vue";
 import { router, usePage } from "@inertiajs/vue3";
 import { handleDelete, handleFetchItems } from "@/helpers/client-req-handler";
-import { check_role, getQueryParams } from "@/helpers/utils";
+import { check_role, getQueryParams, formatNumber } from "@/helpers/utils";
 import { useQuasar } from "quasar";
 
 const title = "Produk";
@@ -30,10 +30,16 @@ const columns = [
     sortable: true,
   },
   {
-    name: "description",
-    label: "Deskripsi",
-    field: "description",
-    align: "left",
+    name: "stock",
+    label: "Stok",
+    field: "stock",
+    align: "right",
+  },
+  {
+    name: "price",
+    label: "Harga",
+    field: "price",
+    align: "right",
   },
   {
     name: "action",
@@ -146,8 +152,11 @@ const computedColumns = computed(() => {
                 <div v-if="props.row.description" class="text-grey-8"><q-icon name="description" /> {{ props.row.description }}</div>
               </template>
             </q-td>
-            <q-td key="description" :props="props" class="wrap-column">
-              {{ props.row.description }}
+            <q-td key="stock" :props="props" class="wrap-column">
+              {{ props.row.stock }} {{ props.row.uom }}
+            </q-td>
+            <q-td key="price" :props="props" class="wrap-column">
+              {{ formatNumber(props.row.price) }}
             </q-td>
             <q-td key="action" :props="props">
               <div class="flex justify-end">

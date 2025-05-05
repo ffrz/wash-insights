@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CompanyProfileController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\OperationalCostCategoryController;
 use App\Http\Controllers\Admin\ProductCategoryController;
 use App\Http\Controllers\Admin\OperationalCostController;
 use App\Http\Controllers\Admin\ProductController;
@@ -132,13 +133,13 @@ Route::middleware([Auth::class])->group(function () {
         });
 
         Route::prefix('operational-cost-categories')->group(function () {
-            Route::get('', [ProductCategoryController::class, 'index'])->name('admin.operational-cost-category.index');
-            Route::get('data', [ProductCategoryController::class, 'data'])->name('admin.operational-cost-category.data');
-            Route::get('add', [ProductCategoryController::class, 'editor'])->name('admin.operational-cost-category.add');
-            Route::get('duplicate/{id}', [ProductCategoryController::class, 'duplicate'])->name('admin.operational-cost-category.duplicate');
-            Route::get('edit/{id}', [ProductCategoryController::class, 'editor'])->name('admin.operational-cost-category.edit');
-            Route::post('save', [ProductCategoryController::class, 'save'])->name('admin.operational-cost-category.save');
-            Route::post('delete/{id}', [ProductCategoryController::class, 'delete'])->name('admin.operational-cost-category.delete');
+            Route::get('', [OperationalCostCategoryController::class, 'index'])->name('admin.operational-cost-category.index');
+            Route::get('data', [OperationalCostCategoryController::class, 'data'])->name('admin.operational-cost-category.data');
+            Route::get('add', [OperationalCostCategoryController::class, 'editor'])->name('admin.operational-cost-category.add');
+            Route::get('duplicate/{id}', [OperationalCostCategoryController::class, 'duplicate'])->name('admin.operational-cost-category.duplicate');
+            Route::get('edit/{id}', [OperationalCostCategoryController::class, 'editor'])->name('admin.operational-cost-category.edit');
+            Route::post('save', [OperationalCostCategoryController::class, 'save'])->name('admin.operational-cost-category.save');
+            Route::post('delete/{id}', [OperationalCostCategoryController::class, 'delete'])->name('admin.operational-cost-category.delete');
         });
 
         Route::prefix('operational-costs')->group(function () {
