@@ -4,7 +4,7 @@ import { handleSubmit } from "@/helpers/client-req-handler";
 import { scrollToFirstErrorField } from "@/helpers/utils";
 
 const page = usePage();
-const title = (!!page.props.data.id ? "Edit" : "Tambah") + " Pelanggan";
+const title = (!!page.props.data.id ? "Edit" : "Tambah") + " Pemasok";
 const form = useForm({
   id: page.props.data.id,
   name: page.props.data.name,
@@ -14,7 +14,7 @@ const form = useForm({
 });
 
 const submit = () =>
-  handleSubmit({ form, url: route('admin.customer.save') });
+  handleSubmit({form, url: route('admin.supplier.save')});
 
 </script>
 
@@ -51,8 +51,7 @@ const submit = () =>
             </q-card-section>
             <q-card-section class="q-gutter-sm">
               <q-btn icon="save" type="submit" label="Simpan" color="primary" :disable="form.processing" />
-              <q-btn icon="cancel" label="Batal" :disable="form.processing"
-                @click="router.get(route('admin.customer.index'))" />
+              <q-btn icon="cancel" label="Batal" :disable="form.processing" @click="router.get(route('admin.supplier.index'))" />
             </q-card-section>
           </q-card>
         </q-form>

@@ -3,17 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\OperationalCostCategory;
+use App\Models\ProductCategory;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-class OperationalCostCategoryController extends Controller
+class ProductCategoryController extends Controller
 {
     public function index()
     {
-        return inertia('admin/operational-cost-category/Index');
+        return inertia('admin/product-category/Index');
     }
 
     public function data(Request $request)
@@ -22,7 +22,7 @@ class OperationalCostCategoryController extends Controller
         $orderType = $request->get('order_type', 'desc');
         $filter = $request->get('filter', []);
 
-        $q = OperationalCostCategory::query();
+        $q = ProductCategory::query();
 
         if (!empty($filter['search'])) {
             $q->where(function ($q) use ($filter) {
@@ -40,9 +40,9 @@ class OperationalCostCategoryController extends Controller
     public function duplicate($id)
     {
         allowed_roles([User::Role_Admin]);
-        $item = OperationalCostCategory::findOrFail($id);
+        $item = ProductCategory::findOrFail($id);
         $item->id = null;
-        return inertia('admin/operational-cost-category/Editor', [
+        return inertia('admin/product-category/Editor', [
             'data' => $item
         ]);
     }
@@ -50,8 +50,8 @@ class OperationalCostCategoryController extends Controller
     public function editor($id = 0)
     {
         allowed_roles([User::Role_Admin]);
-        $item = $id ? OperationalCostCategory::findOrFail($id) : new OperationalCostCategory(['date' => date('Y-m-d')]);
-        return inertia('admin/operational-cost-category/Editor', [
+        $item = $id ? ProductCategory::findOrFail($id) : new ProductCategory(['date' => date('Y-m-d')]);
+        return inertia('admin/product-category/Editor', [
             'data' => $item,
         ]);
     }
@@ -62,7 +62,7 @@ class OperationalCostCategoryController extends Controller
             'name' => [
                 'required',
                 'max:255',
-                Rule::unique('operational_cost_categories', 'name')->ignore($request->id), // agar saat update tidak dianggap duplikat sendiri
+                Rule::unique('product_categories', 'name')->ignore($request->id), // agar saat update tidak dianggap duplikat sendiri
             ],
             'description' => 'nullable|max:1000',
         ];
@@ -74,11 +74,11 @@ class OperationalCostCategoryController extends Controller
         $request->validate($rules);
 
         if (!$request->id) {
-            $item = new OperationalCostCategory();
-            $message = 'operational-cost-category-created';
+            $item = new ProductCategory();
+            $message = 'product-category-created';
         } else {
-            $item = OperationalCostCategory::findOrFail($request->post('id', 0));
-            $message = 'operational-cost-category-updated';
+            $item = ProductCategory::findOrFail($request->post('id', 0));
+            $message = 'product-category-updated';
         }
 
         $data = $request->only($fields);
@@ -87,7 +87,7 @@ class OperationalCostCategoryController extends Controller
         $item->fill($data);
         $item->save();
 
-        return redirect(route('admin.operational-cost-category.index'))
+        return redirect(route('admin.product-category.index'))
             ->with('success', __("messages.$message", ['name' => $item->name]));
     }
 
@@ -95,11 +95,11 @@ class OperationalCostCategoryController extends Controller
     {
         allowed_roles([User::Role_Admin]);
 
-        $item = OperationalCostCategory::findOrFail($id);
+        $item = ProductCategory::findOrFail($id);
         $item->delete();
 
         return response()->json([
-            'message' => __('messages.operational-cost-category-deleted', ['name' => $item->name])
+            'message' => __('messages.product-category-deleted', ['name' => $item->name])
         ]);
     }
 }

@@ -27,6 +27,6 @@ class UserSeeder extends Seeder
             'role' => User::Role_Washer,
             'active' => 1,
         ]);
-        User::factory(100)->create();
+        User::factory(10)->create();
     }
 }

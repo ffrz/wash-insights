@@ -5,9 +5,9 @@ import { ref } from "vue";
 
 
 let form = useForm({
-  username: "",
-  password: "",
-  remember: false,
+  username: "admin",
+  password: "12345",
+  remember: true,
 });
 
 const submit = () => handleSubmit({ form, url: route('admin.auth.login') });

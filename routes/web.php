@@ -4,10 +4,12 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CompanyProfileController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\OperationalCostCategoryController;
+use App\Http\Controllers\Admin\ProductCategoryController;
 use App\Http\Controllers\Admin\OperationalCostController;
+use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\ServiceOrderController;
+use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\WashOrderController;
 use App\Http\Controllers\Admin\WashServiceController;
@@ -54,6 +56,26 @@ Route::middleware([Auth::class])->group(function () {
             return inertia('admin/About');
         })->name('admin.about');
 
+        Route::prefix('products')->group(function () {
+            Route::get('', [ProductController::class, 'index'])->name('admin.product.index');
+            Route::get('data', [ProductController::class, 'data'])->name('admin.product.data');
+            Route::get('add', [ProductController::class, 'editor'])->name('admin.product.add');
+            Route::get('duplicate/{id}', [ProductController::class, 'duplicate'])->name('admin.product.duplicate');
+            Route::get('edit/{id}', [ProductController::class, 'editor'])->name('admin.product.edit');
+            Route::post('save', [ProductController::class, 'save'])->name('admin.product.save');
+            Route::post('delete/{id}', [ProductController::class, 'delete'])->name('admin.product.delete');
+        });
+
+        Route::prefix('product-categories')->group(function () {
+            Route::get('', [ProductCategoryController::class, 'index'])->name('admin.product-category.index');
+            Route::get('data', [ProductCategoryController::class, 'data'])->name('admin.product-category.data');
+            Route::get('add', [ProductCategoryController::class, 'editor'])->name('admin.product-category.add');
+            Route::get('duplicate/{id}', [ProductCategoryController::class, 'duplicate'])->name('admin.product-category.duplicate');
+            Route::get('edit/{id}', [ProductCategoryController::class, 'editor'])->name('admin.product-category.edit');
+            Route::post('save', [ProductCategoryController::class, 'save'])->name('admin.product-category.save');
+            Route::post('delete/{id}', [ProductCategoryController::class, 'delete'])->name('admin.product-category.delete');
+        });
+
         Route::prefix('customers')->group(function () {
             Route::get('', [CustomerController::class, 'index'])->name('admin.customer.index');
             Route::get('data', [CustomerController::class, 'data'])->name('admin.customer.data');
@@ -63,6 +85,17 @@ Route::middleware([Auth::class])->group(function () {
             Route::get('detail/{id}', [CustomerController::class, 'detail'])->name('admin.customer.detail');
             Route::post('save', [CustomerController::class, 'save'])->name('admin.customer.save');
             Route::post('delete/{id}', [CustomerController::class, 'delete'])->name('admin.customer.delete');
+        });
+
+        Route::prefix('suppliers')->group(function () {
+            Route::get('', [SupplierController::class, 'index'])->name('admin.supplier.index');
+            Route::get('data', [SupplierController::class, 'data'])->name('admin.supplier.data');
+            Route::get('add', [SupplierController::class, 'editor'])->name('admin.supplier.add');
+            Route::get('duplicate/{id}', [SupplierController::class, 'duplicate'])->name('admin.supplier.duplicate');
+            Route::get('edit/{id}', [SupplierController::class, 'editor'])->name('admin.supplier.edit');
+            Route::get('detail/{id}', [SupplierController::class, 'detail'])->name('admin.supplier.detail');
+            Route::post('save', [SupplierController::class, 'save'])->name('admin.supplier.save');
+            Route::post('delete/{id}', [SupplierController::class, 'delete'])->name('admin.supplier.delete');
         });
 
         Route::prefix('wash-services')->group(function () {
@@ -99,13 +132,13 @@ Route::middleware([Auth::class])->group(function () {
         });
 
         Route::prefix('operational-cost-categories')->group(function () {
-            Route::get('', [OperationalCostCategoryController::class, 'index'])->name('admin.operational-cost-category.index');
-            Route::get('data', [OperationalCostCategoryController::class, 'data'])->name('admin.operational-cost-category.data');
-            Route::get('add', [OperationalCostCategoryController::class, 'editor'])->name('admin.operational-cost-category.add');
-            Route::get('duplicate/{id}', [OperationalCostCategoryController::class, 'duplicate'])->name('admin.operational-cost-category.duplicate');
-            Route::get('edit/{id}', [OperationalCostCategoryController::class, 'editor'])->name('admin.operational-cost-category.edit');
-            Route::post('save', [OperationalCostCategoryController::class, 'save'])->name('admin.operational-cost-category.save');
-            Route::post('delete/{id}', [OperationalCostCategoryController::class, 'delete'])->name('admin.operational-cost-category.delete');
+            Route::get('', [ProductCategoryController::class, 'index'])->name('admin.operational-cost-category.index');
+            Route::get('data', [ProductCategoryController::class, 'data'])->name('admin.operational-cost-category.data');
+            Route::get('add', [ProductCategoryController::class, 'editor'])->name('admin.operational-cost-category.add');
+            Route::get('duplicate/{id}', [ProductCategoryController::class, 'duplicate'])->name('admin.operational-cost-category.duplicate');
+            Route::get('edit/{id}', [ProductCategoryController::class, 'editor'])->name('admin.operational-cost-category.edit');
+            Route::post('save', [ProductCategoryController::class, 'save'])->name('admin.operational-cost-category.save');
+            Route::post('delete/{id}', [ProductCategoryController::class, 'delete'])->name('admin.operational-cost-category.delete');
         });
 
         Route::prefix('operational-costs')->group(function () {

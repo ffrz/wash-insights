@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('vehicle_description')->nullable()->default('');
 
             $table->datetime('order_created_at')->nullable();     // saat input order, bisa default now()
-            $table->datetime('work_started_at')->nullable();      // saat kurir atau teknisi mulai kerja
+            $table->datetime('work_started_at')->nullable();      // saat operator mulai kerja
             $table->datetime('work_completed_at')->nullable();    // saat pekerjaan selesai
             $table->datetime('order_closed_at')->nullable();      // saat order dianggap selesai total
 

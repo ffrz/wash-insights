@@ -2,8 +2,7 @@
 
 namespace App\Models;
 
-
-class WashOrderDetail extends Model
+class WashOrderDetail extends \Illuminate\Database\Eloquent\Model
 {
     // Disable auto-incrementing karena kita pakai composite key
     public $incrementing = false;

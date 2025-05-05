@@ -8,6 +8,10 @@ return [
     'customer-updated' => 'Pelanggan :name telah diperbarui.',
     'customer-deleted' => 'Pelanggan :name telah dihapus.',
 
+    'supplier-created' => 'Pemasok :name telah ditambahkan.',
+    'supplier-updated' => 'Pemasok :name telah diperbarui.',
+    'supplier-deleted' => 'Pemasok :name telah dihapus.',
+
     'technician-created' => 'Teknisi :name telah ditambahkan.',
     'technician-updated' => 'Teknisi :name telah diperbarui.',
     'technician-deleted' => 'Teknisi :name telah dihapus.',
@@ -22,6 +26,14 @@ return [
     'operational-cost-category-created' => 'Kategori biaya operasional :name telah dibuat.',
     'operational-cost-category-updated' => 'Kategori biaya operasional :name telah diperbarui.',
     'operational-cost-category-deleted' => 'Kategori biaya operasional :name telah dihapus.',
+
+    'product-updated' => 'Produk :name telah diperbarui.',
+    'product-deleted' => 'Produk :name telah dihapus.',
+    'product-created' => 'Produk :name telah dibuat.',
+
+    'product-category-updated' => 'Kategori :name telah diperbarui.',
+    'product-category-deleted' => 'Kategori :name telah dihapus.',
+    'product-category-created' => 'Kategori :name telah dibuat.',
 
     'update-company-profile-success' => 'Profil perusahaan berhasil diperbarui.',
 

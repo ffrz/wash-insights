@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\DB;
 
-class Customer extends Model
+class Supplier extends Model
 {
     use HasFactory;
 
@@ -13,10 +13,10 @@ class Customer extends Model
         'name', 'phone', 'address', 'active'
     ];
 
-    public static function activeCustomerCount()
+    public static function activeSupplierCount()
     {
         return DB::select(
-            'select count(0) as count from customers where active = 1'
+            'select count(0) as count from suppliers where active = 1'
         )[0]->count;
     }
 }

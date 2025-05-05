@@ -1,19 +1,21 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from "vue";
-import { router, usePage } from "@inertiajs/vue3";
+import { router } from "@inertiajs/vue3";
 import { handleDelete, handleFetchItems } from "@/helpers/client-req-handler";
 import { check_role, getQueryParams } from "@/helpers/utils";
 import { useQuasar } from "quasar";
 
-const title = "Kategori Biaya Operasional";
+const title = "Pemasok";
 const $q = useQuasar();
 const showFilter = ref(false);
 const rows = ref([]);
 const loading = ref(true);
 const filter = reactive({
   search: "",
+  status: "active",
   ...getQueryParams(),
 });
+
 const pagination = ref({
   page: 1,
   rowsPerPage: 10,
@@ -21,24 +23,39 @@ const pagination = ref({
   sortBy: "name",
   descending: false,
 });
+
 const columns = [
   {
     name: "name",
-    label: "Nama Kategori",
+    label: "Nama",
     field: "name",
     align: "left",
     sortable: true,
   },
   {
-    name: "description",
-    label: "Catatan",
-    field: "description",
+    name: "phone",
+    label: "No HP",
+    field: "phone",
     align: "left",
+    sortable: true,
+  },
+  {
+    name: "address",
+    label: "Alamat",
+    field: "address",
+    align: "left",
+    sortable: true,
   },
   {
     name: "action",
     align: "right",
   },
+];
+
+const statuses = [
+  { value: "all", label: "Semua" },
+  { value: "active", label: "Aktif" },
+  { value: "inactive", label: "Tidak Aktif" },
 ];
 
 onMounted(() => {
@@ -47,8 +64,8 @@ onMounted(() => {
 
 const deleteItem = (row) =>
   handleDelete({
-    message: `Hapus Kategori Biaya ${row.name}?`,
-    url: route("admin.operational-cost-category.delete", row.id),
+    message: `Hapus pemasok ${row.name}?`,
+    url: route("admin.supplier.delete", row.id),
     fetchItemsCallback: fetchItems,
     loading,
   });
@@ -59,15 +76,13 @@ const fetchItems = (props = null) => {
     filter,
     props,
     rows,
-    url: route("admin.operational-cost-category.data"),
+    url: route("admin.supplier.data"),
     loading,
   });
 };
 
-const onFilterChange = () => {
-  fetchItems();
-};
-
+const onFilterChange = () => fetchItems();
+const onRowClicked = (row) =>  router.get(route('admin.supplier.detail', {id: row.id}));
 const computedColumns = computed(() => {
   if ($q.screen.gt.sm) return columns;
   return columns.filter((col) => col.name === "name" || col.name === "action");
@@ -83,7 +98,7 @@ const computedColumns = computed(() => {
         icon="add"
         dense
         color="primary"
-        @click="router.get(route('admin.operational-cost-category.add'))"
+        @click="router.get(route('admin.supplier.add'))"
       />
       <q-btn
         class="q-ml-sm"
@@ -96,6 +111,18 @@ const computedColumns = computed(() => {
     <template #header v-if="showFilter">
       <q-toolbar class="filter-bar">
         <div class="row q-col-gutter-xs items-center q-pa-sm full-width">
+          <q-select
+            class="custom-select col-xs-12 col-sm-2"
+            style="min-width: 150px"
+            v-model="filter.status"
+            :options="statuses"
+            label="Status"
+            dense
+            map-options
+            emit-value
+            outlined
+            @update:model-value="onFilterChange"
+          />
           <q-input
             class="col"
             outlined
@@ -115,6 +142,7 @@ const computedColumns = computed(() => {
     <div class="q-pa-sm">
       <q-table
         class="full-height-table"
+        ref="tableRef"
         flat
         bordered
         square
@@ -133,23 +161,37 @@ const computedColumns = computed(() => {
         <template v-slot:loading>
           <q-inner-loading showing color="red" />
         </template>
+
         <template v-slot:no-data="{ icon, message, filter }">
           <div class="full-width row flex-center text-grey-8 q-gutter-sm">
-            <span>{{ message }} {{ filter ? " with term " + filter : "" }}</span>
+            <q-icon size="2em" name="sentiment_dissatisfied" />
+            <span>
+              {{ message }}
+              {{ filter ? " with term " + filter : "" }}</span
+            >
+            <q-icon size="2em" :name="filter ? 'filter_b_and_w' : icon" />
           </div>
         </template>
+
         <template v-slot:body="props">
-          <q-tr :props="props">
+          <q-tr :props="props" :class="!props.row.active ? 'bg-red-1' : ''" class="cursor-pointer" @click="onRowClicked(props.row)">
             <q-td key="name" :props="props" class="wrap-column">
-              {{ props.row.name }}
-              <template v-if="!$q.screen.gt.sm">
-                <div v-if="props.row.description" class="text-grey-8"><q-icon name="description" /> {{ props.row.description }}</div>
+              <div><q-icon name="person" /> {{ props.row.name }}</div>
+              <template v-if="$q.screen.lt.md">
+                <div><q-icon name="phone" /> {{ props.row.phone }}</div>
+                <div><q-icon name="home_pin" /> {{ props.row.address }}</div>
               </template>
             </q-td>
-            <q-td key="description" :props="props" class="wrap-column">
-              {{ props.row.description }}
+            <q-td key="phone" :props="props">
+              {{ props.row.phone }}
             </q-td>
-            <q-td key="action" :props="props">
+            <q-td key="address" :props="props">
+              {{ props.row.address }}
+            </q-td>
+            <q-td
+              key="action"
+              :props="props"
+            >
               <div class="flex justify-end">
                 <q-btn
                   :disabled="!check_role($CONSTANTS.USER_ROLE_ADMIN)"
@@ -170,29 +212,18 @@ const computedColumns = computed(() => {
                         clickable
                         v-ripple
                         v-close-popup
-                        @click.stop="
-                          router.get(
-                            route(
-                              'admin.operational-cost-category.duplicate',
-                              props.row.id
-                            )
-                          )
-                        "
+                        @click.stop="router.get(route('admin.supplier.duplicate', props.row.id))"
                       >
                         <q-item-section avatar>
                           <q-icon name="file_copy" />
                         </q-item-section>
-                        <q-item-section icon="copy">Duplikat</q-item-section>
+                        <q-item-section icon="copy"> Duplikat </q-item-section>
                       </q-item>
                       <q-item
                         clickable
                         v-ripple
                         v-close-popup
-                        @click.stop="
-                          router.get(
-                            route('admin.operational-cost-category.edit', props.row.id)
-                          )
-                        "
+                        @click.stop="router.get(route('admin.supplier.edit', props.row.id))"
                       >
                         <q-item-section avatar>
                           <q-icon name="edit" />

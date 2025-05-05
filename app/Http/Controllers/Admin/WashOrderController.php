@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\User;
 use App\Models\WashOrder;
+use App\Models\WashOrderDetail;
 use App\Models\WashService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -58,11 +59,7 @@ class WashOrderController extends Controller
 
     public function detail($id = 0)
     {
-        $item = WashOrder::with([
-            // 'createdBy:id,username,name',
-            // 'updatedBy:id,username,name',
-            // 'closedBy:id,username,name',
-        ])->findOrFail($id);
+        $item = $this->_findOder($id);
 
         return inertia('admin/wash-order/Detail', [
             'data' => $item
@@ -100,7 +97,7 @@ class WashOrderController extends Controller
 
     private function _findOder($id)
     {
-        return $id ? WashOrder::with([
+        $order = $id ? WashOrder::with([
             // 'createdBy:id,username,name',
             // 'updatedBy:id,username,name',
             // 'closedBy:id,username,name',
@@ -110,6 +107,17 @@ class WashOrderController extends Controller
             'service_status' => WashOrder::ServiceStatus_NotStarted,
             'payment_status' => WashOrder::PaymentStatus_Unpaid,
         ]);
+        // $order->details = [];
+
+        $itemDetail = WashOrderDetail::where('order_id', $order->id)->get();
+        
+        $detailId = 1;
+        foreach ($itemDetail as $detail) {
+            // $order->details[$detailId] = $detail;
+            $order->{'service_' . $detailId} = $detail->service_id;
+            $detailId++;
+        }
+        return $order;
     }
 
     private function _renderEditor($item)
@@ -174,6 +182,20 @@ class WashOrderController extends Controller
 
             $item->fill($data);
             $item->save();
+
+            for ($i = 1; $i <= 5; $i++) {
+                $serviceId = $request->input('service_' . $i);
+                if ($serviceId) {
+                    $orderDetail = new WashOrderDetail([
+                        'id' => $i,
+                        'order_id' => $item->id,
+                        'service_id' => $serviceId,
+                        'operator_id' => $request->input('operator_' . $i),
+                        'price' => WashService::where('id', $serviceId)->value('price'),
+                    ]);
+                    $orderDetail->save();
+                }
+            }
         });
 
         return redirect(route('admin.wash-order.index'))->with([

@@ -18,10 +18,8 @@ class OperationalCostFactory extends Factory
      */
     public function definition(): array
     {
-        $randomCategoryId = DB::table('operational_cost_categories')->inRandomOrder()->value('id');
-
         return [
-            'category_id' => $randomCategoryId,
+            'category_id' => DB::table('operational_cost_categories')->inRandomOrder()->value('id'),
             'date' => new Carbon(fake()->dateTimeThisYear()),
             'description' => fake()->sentence(),
             'amount' => fake()->numberBetween(1, 200) * 1000,

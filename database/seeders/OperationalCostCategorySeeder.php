@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\OperationalCostCategory;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class OperationalCostCategorySeeder extends Seeder
 {
@@ -12,39 +12,31 @@ class OperationalCostCategorySeeder extends Seeder
      */
     public function run(): void
     {
-        OperationalCostCategory::factory()->create([
-            'name' => 'Listrik',
-            'description' => 'Biaya Tagihan Listrik',
-        ]);
-
-        OperationalCostCategory::factory()->create([
-            'name' => 'PDAM',
-            'description' => 'Biaya Tagihan PDAM',
-        ]);
-
-        OperationalCostCategory::factory()->create([
-            'name' => 'Internet',
-            'description' => 'Biaya Tagihan Internet',
-        ]);
-
-        OperationalCostCategory::factory()->create([
-            'name' => 'Pulsa dan Quota',
-            'description' => 'Biaya pulsa dan Quota',
-        ]);
-
-        OperationalCostCategory::factory()->create([
-            'name' => 'ATK',
-            'description' => 'Biaya ATK',
-        ]);
-
-        OperationalCostCategory::factory()->create([
-            'name' => 'Bahan Servis',
-            'description' => 'Biaya bahan-bahan servis habis pakai',
-        ]);
-
-        OperationalCostCategory::factory()->create([
-            'name' => 'Alat Servis',
-            'description' => 'Biaya alat-alat servis non bahan',
+        DB::table('operational_cost_categories')->insert([
+            [
+                'name' => 'Listrik',
+                'description' => 'Biaya Tagihan Listrik',
+            ],
+            [
+                'name' => 'Telepon',
+                'description' => 'Biaya Tagihan Telepon',
+            ],
+            [
+                'name' => 'Sewa Tempat',
+                'description' => 'Biaya Sewa Tempat',
+            ],
+            [
+                'name' => 'Gaji Karyawan',
+                'description' => 'Biaya Gaji Karyawan',
+            ],
+            [
+                'name' => 'Pajak',
+                'description' => 'Biaya Pajak',
+            ],
+            [
+                'name' => 'Biaya Lain-lain',
+                'description' => 'Biaya Lain-lain',
+            ],
         ]);
     }
 }

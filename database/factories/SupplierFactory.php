@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Customer>
  */
-class OperationalCostCategoryFactory extends Factory
+class SupplierFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,8 +17,10 @@ class OperationalCostCategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->sentence(2),
-            'description' => fake()->sentence(),
+            'name' => $this->faker->company,
+            'phone' => $this->faker->phoneNumber,
+            'address' => $this->faker->address,
+            'active' => $this->faker->boolean(90)
         ];
     }
 }

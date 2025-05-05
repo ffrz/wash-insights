@@ -5,7 +5,7 @@ import { handleDelete, handleFetchItems } from "@/helpers/client-req-handler";
 import { check_role, getQueryParams } from "@/helpers/utils";
 import { useQuasar } from "quasar";
 
-const title = "Kategori Biaya Operasional";
+const title = "Kategori Produk";
 const $q = useQuasar();
 const showFilter = ref(false);
 const rows = ref([]);
@@ -47,8 +47,8 @@ onMounted(() => {
 
 const deleteItem = (row) =>
   handleDelete({
-    message: `Hapus Kategori Biaya ${row.name}?`,
-    url: route("admin.operational-cost-category.delete", row.id),
+    message: `Hapus Kategori ${row.name}?`,
+    url: route("admin.product-category.delete", row.id),
     fetchItemsCallback: fetchItems,
     loading,
   });
@@ -59,7 +59,7 @@ const fetchItems = (props = null) => {
     filter,
     props,
     rows,
-    url: route("admin.operational-cost-category.data"),
+    url: route("admin.product-category.data"),
     loading,
   });
 };
@@ -83,7 +83,7 @@ const computedColumns = computed(() => {
         icon="add"
         dense
         color="primary"
-        @click="router.get(route('admin.operational-cost-category.add'))"
+        @click="router.get(route('admin.product-category.add'))"
       />
       <q-btn
         class="q-ml-sm"
@@ -173,7 +173,7 @@ const computedColumns = computed(() => {
                         @click.stop="
                           router.get(
                             route(
-                              'admin.operational-cost-category.duplicate',
+                              'admin.product-category.duplicate',
                               props.row.id
                             )
                           )
@@ -190,7 +190,7 @@ const computedColumns = computed(() => {
                         v-close-popup
                         @click.stop="
                           router.get(
-                            route('admin.operational-cost-category.edit', props.row.id)
+                            route('admin.product-category.edit', props.row.id)
                           )
                         "
                       >
