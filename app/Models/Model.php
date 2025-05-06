@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 
 class Model extends \Illuminate\Database\Eloquent\Model
 {
@@ -19,8 +20,10 @@ class Model extends \Illuminate\Database\Eloquent\Model
         });
 
         static::updating(function ($model) {
-            $model->updated_datetime = current_datetime();
-            $model->updated_by_uid = Auth::id();
+            if (Schema::hasColumn($model->getTable(), 'updated_datetime')) {
+                $model->updated_datetime = current_datetime();
+                $model->updated_by_uid = Auth::id();
+            }
             return true;
         });
     }
