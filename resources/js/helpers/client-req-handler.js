@@ -33,14 +33,13 @@ export function handleSubmit(data) {
         //   ],
         // });
       },
-      onError: (response) => {
+      onError: (error) => {
         _scrollToFirstError();
-
-        if (typeof (response.message) !== 'string' || response.message.length === 0)
-          return;
-
+        const message = typeof error.message === 'string' && error.message.length > 0
+          ? error.message
+          : 'Terjadi kesalahan saat memproses permintaan.';
         Notify.create({
-          message: response.message,
+          message: message,
           icon: "info",
           color: "negative",
           actions: [
@@ -91,20 +90,15 @@ export function handleDelete(data) {
 export function handleFetchItems(options) {
   const { pagination, props, rows, url, loading, filter } = options;
 
+  let source = props ? props.pagination : pagination.value;
+
   let params = {
-    page: pagination.value.page,
-    per_page: pagination.value.rowsPerPage,
-    order_by: pagination.value.sortBy,
-    order_type: pagination.value.descending ? "desc" : "asc",
+    page: source.page,
+    per_page: source.rowsPerPage,
+    order_by: source.sortBy,
+    order_type: source.descending ? "desc" : "asc",
     filter: filter,
   };
-
-  if (props != null) {
-    params.page = props.pagination.page;
-    params.per_page = props.pagination.rowsPerPage;
-    params.order_by = props.pagination.sortBy;
-    params.order_type = props.pagination.descending ? "desc" : "asc";
-  }
 
   loading.value = true;
 
