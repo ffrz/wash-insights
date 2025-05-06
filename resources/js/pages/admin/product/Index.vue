@@ -214,10 +214,10 @@ const computedColumns = computed(() => {
               </template>
             </q-td>
             <q-td key="stock" :props="props" class="wrap-column" :class="{
-              'low-stock': Number(props.row.stock) > 0 && Number(props.row.stock) < Number(props.row.min_stock),
-              'over-stock': Number(props.row.max_stock) && Number(props.row.stock) > Number(props.row.max_stock)
+              'low-stock': props.row.type == 'stocked' && (Number(props.row.stock) == 0 || Number(props.row.stock) < Number(props.row.min_stock)),
+              'over-stock': props.row.type == 'stocked' && (Number(props.row.max_stock) && Number(props.row.stock) > Number(props.row.max_stock))
             }">
-              {{ props.row.stock }} {{ props.row.uom }}
+              {{ props.row.type == 'stocked' ? formatNumber(props.row.stock) + ' ' + props.row.uom : '-' }}
             </q-td>
             <q-td key="cost" :props="props" class="wrap-column" v-if="true">
               {{ formatNumber(props.row.cost) }}
