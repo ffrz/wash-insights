@@ -8,6 +8,8 @@ import { create_options } from "@/helpers/utils";
 
 const page = usePage();
 
+const showCostColumn = ref(false);
+
 const types = [
   { value: "all", label: "Semua" },
   ...create_options(window.CONSTANTS.PRODUCT_TYPES),
@@ -80,10 +82,6 @@ let columns = [
   },
 ];
 
-if (page.props.auth.user.role != CONSTANTS.USER_ROLE_ADMIN) {
-  columns.splice(2, 1);
-}
-
 onMounted(() => {
   fetchItems();
 });
@@ -141,8 +139,14 @@ const filterSuppliers = (val, update) => {
 };
 
 const computedColumns = computed(() => {
-  if ($q.screen.gt.sm) return columns;
-  return columns.filter((col) => col.name === "name" || col.name === "action");
+  let computedColumns = [...columns];
+  if (!showCostColumn.value) {
+    computedColumns.splice(2, 1)
+  }
+  
+  if ($q.screen.gt.sm) return computedColumns;
+
+  return computedColumns.filter((col) => col.name === "name" || col.name === "action");
 });
 </script>
 
@@ -151,6 +155,9 @@ const computedColumns = computed(() => {
   <authenticated-layout>
     <template #title>{{ title }}</template>
     <template #right-button>
+      <q-btn v-if="$page.props.auth.user.role == $CONSTANTS.USER_ROLE_ADMIN" class="q-mr-sm"
+        :icon="!showCostColumn ? 'visibility_off' : 'visibility'" label="" dense color="grey"
+        @click="showCostColumn = !showCostColumn" />
       <q-btn icon="add" dense color="primary" @click="router.get(route('admin.product.add'))" />
       <q-btn class="q-ml-sm" :icon="!showFilter ? 'filter_alt' : 'filter_alt_off'" color="grey" dense
         @click="showFilter = !showFilter" />
@@ -201,11 +208,16 @@ const computedColumns = computed(() => {
               <div v-if="props.row.supplier_id" class="text-grey-8"><q-icon name="local_shipping" />
                 {{ props.row.supplier.name }}
               </div>
-              <div v-if="props.row.description"><q-icon name="description" />
-                {{ props.row.description }}
-              </div>
               <template v-if="!$q.screen.gt.sm">
-
+                <div v-if="props.row.type == 'stocked'"><q-icon name="cycle" />
+                  Stok: {{ formatNumber(props.row.stock) }} {{ props.row.uom }}
+                </div>
+                <div v-if="showCostColumn"><q-icon name="money" />
+                  Modal: Rp. {{ formatNumber(props.row.cost) }}
+                </div>
+                <div><q-icon name="sell" />
+                  Harga: Rp. {{ formatNumber(props.row.price) }}
+                </div>
               </template>
             </q-td>
             <q-td key="stock" :props="props" class="wrap-column" :class="{
