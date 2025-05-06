@@ -96,13 +96,20 @@ a:hover {
 }
 
 /** Select menampilkan elipsis ketika teks terlalu panjang */
+.custom-select .q-field__native {
+  flex-wrap: nowrap !important;
+}
 .custom-select .q-field__control-container {
   white-space: nowrap;
 }
 
+.custom-select.hide-input {
+  overflow: hidden;
+}
+
 .custom-select .q-field__control-container * {
   max-width: 133%;
-  display: block;
+  /* display: block; */
   overflow: hidden;
   text-overflow: ellipsis;
 }
