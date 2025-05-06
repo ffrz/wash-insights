@@ -105,42 +105,61 @@ class ProductController extends Controller
 
     public function save(Request $request)
     {
-        $rules = [
+        $data = $request->validate([
+            'category_id' => [
+                'nullable',
+                Rule::exists('product_categories', 'id'),
+            ],
+            'supplier_id' => [
+                'nullable',
+                Rule::exists('suppliers', 'id'),
+            ],
+            'type' => [
+                'nullable',
+                Rule::in(array_keys(Product::Types)),
+            ],
             'name' => [
                 'required',
                 'max:255',
                 Rule::unique('products', 'name')->ignore($request->id), // agar saat update tidak dianggap duplikat sendiri
             ],
             'description' => 'nullable|max:1000',
-        ];
+            'barcode' => 'nullable|max:255',
+            'uom' => 'nullable|max:255',
+            'stock' => 'nullable|numeric',
+            'min_stock' => 'nullable|numeric',
+            'max_stock' => 'nullable|numeric',
+            'cost' => 'nullable|numeric',
+            'price' => 'nullable|numeric',
+            'active' => 'nullable|boolean',
+            'notes' => 'nullable|max:1000',
+        ]);
 
-        $item = null;
-        $message = '';
+        $item = $request->id ? Product::findOrFail($request->id) : new Product();
 
-        $request->validate($rules);
+        $item->fill([
+            'category_id' => $data['category_id'] ?? null,
+            'supplier_id' => $data['supplier_id'] ?? null,
+            'type' => $data['type'] ?? Product::Type_Stocked,
+            'name' => $data['name'],
+            'description' => $data['description'] ?? '',
+            'barcode' => $data['barcode'] ?? '',
+            'uom' => $data['uom'] ?? '',
+            'stock' => $data['stock'] ?? 0,
+            'min_stock' => $data['min_stock'] ?? 0,
+            'max_stock' => $data['max_stock'] ?? 0,
+            'cost' => $data['cost'] ?? 0,
+            'price' => $data['price'] ?? 0,
+            'active' => $data['active'] ?? 0,
+            'notes' => $data['notes'] ?? '',
+        ]);
 
-        if (!$request->id) {
-            $item = new Product();
-            $message = 'product-created';
-        } else {
-            $item = Product::findOrFail($request->post('id', 0));
-            $message = 'product-updated';
-        }
-
-        $data = $request->all();
-        $data['category_id'] = $data['category_id'] ?? null;
-        $data['supplier_id'] = $data['supplier_id'] ?? '';
-        $data['description'] = $data['description'] ?? '';
-        $data['notes'] = $data['notes'] ?? '';
-        $data['stock'] = $data['stock'] ?? 0;
-        $data['min_stock'] = $data['min_stock'] ?? 0;
-        $data['max_stock'] = $data['max_stock'] ?? 0;
-
-        $item->fill($data);
         $item->save();
 
+        $messageKey = $request->id ? 'product-updated' : 'product-created';
+
         return redirect(route('admin.product.index'))
-            ->with('success', __("messages.$message", ['name' => $item->name]));
+            ->with('success', __("messages.$messageKey", ['name' => $item->name]));
     }
 
     public function delete($id)

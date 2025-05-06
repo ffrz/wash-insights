@@ -2,9 +2,11 @@
 import { computed, onMounted, reactive, ref } from "vue";
 import { router, usePage } from "@inertiajs/vue3";
 import { handleDelete, handleFetchItems } from "@/helpers/client-req-handler";
-import { check_role, getQueryParams, formatNumber, create_options_from_product_categories, create_options_from_suppliers } from "@/helpers/utils";
+import { check_role, getQueryParams, formatNumber } from "@/helpers/utils";
 import { useQuasar } from "quasar";
 import { create_options } from "@/helpers/utils";
+import { useProductCategoryFilter } from "@/helpers/useProductCategoryFilter";
+import { useSupplierFilter } from "@/helpers/useSupplierFilter";
 
 const page = usePage();
 
@@ -109,34 +111,8 @@ const onFilterChange = () => {
   fetchItems();
 };
 
-const categories = [
-  { value: "all", label: "Semua" },
-  ...create_options_from_product_categories(page.props.categories),
-];
-
-const filteredCategories = ref(categories);
-const filterCategories = (val, update) => {
-  update(() => {
-    let search = val.toLowerCase();
-    filteredCategories.value = categories.filter(item =>
-      item.label.toLowerCase().includes(search)
-    );
-  });
-};
-
-const suppliers = [
-  { value: "all", label: "Semua" },
-  ...create_options_from_suppliers(page.props.suppliers),
-];
-const filteredSuppliers = ref(suppliers);
-const filterSuppliers = (val, update) => {
-  update(() => {
-    let search = val.toLowerCase();
-    filteredSuppliers.value = suppliers.filter(item =>
-      item.label.toLowerCase().includes(search)
-    );
-  });
-};
+const { filteredCategories, filterCategories} = useProductCategoryFilter(page.props.categories, true);
+const { filteredSuppliers, filterSuppliers} = useSupplierFilter(page.props.suppliers, true);
 
 const computedColumns = computed(() => {
   let computedColumns = [...columns];

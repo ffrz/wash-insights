@@ -47,47 +47,40 @@ export function create_month_options() {
   ];
 }
 
-export function create_options_from_product_categories(items) {
-  return items.map((item) => {
-    return { 'value': item.id, 'label': `${item.name}` };
-  });
-}
-
-export function create_options_from_suppliers(items) {
-  return items.map((supplier) => {
-    return { 'value': supplier.id, 'label': `#${supplier.id}: ${supplier.name} - ${supplier.phone}` };
-  });
-}
-
 export function create_options(data) {
   return Object.entries(data)
     .map(([key, value]) => ({ 'value': key, 'label': value }));
 }
 
+// TODO: remove this function, move to useOperationalCostCategory
 export function create_options_from_operational_cost_categories(items) {
   return items.map((item) => {
     return { 'value': item.id, 'label': `${item.name}` };
   });
 }
 
+// TODO: remove this function
 export function create_options_from_users(items) {
   return items.map((user) => {
     return { 'value': user.id, 'label': `${user.username} - ${user.name}` };
   });
 }
 
+// TODO: remove this function
 export function create_options_from_technicians(items) {
   return items.map((technician) => {
     return { 'value': technician.id, 'label': `#${technician.id} - ${technician.name}` };
   });
 }
 
+// TODO: remove this function
 export function create_options_from_customers(items) {
   return items.map((customer) => {
     return { 'value': customer.id, 'label': `#${customer.id}: ${customer.name}` };
   });
 }
 
+// TODO: remove this function
 export function create_options_from_customers_with_phone(items) {
   return items.map((customer) => {
     return { 'value': customer.id, 'label': `#${customer.id}: ${customer.name} - ${customer.phone}` };
