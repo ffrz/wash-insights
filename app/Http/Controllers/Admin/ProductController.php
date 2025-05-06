@@ -26,11 +26,13 @@ class ProductController extends Controller
         $orderType = $request->get('order_type', 'desc');
         $filter = $request->get('filter', []);
 
-        $q = Product::query();
+        $q = Product::with(['supplier', 'category']);
 
         if (!empty($filter['search'])) {
             $q->where(function ($q) use ($filter) {
                 $q->where('name', 'like', '%' . $filter['search'] . '%');
+                $q->orWhere('description', 'like', '%' . $filter['search'] . '%');
+                $q->orWhere('notes', 'like', '%' . $filter['search'] . '%');
             });
         }
 
@@ -68,6 +70,13 @@ class ProductController extends Controller
 
         $items = $q->paginate($request->get('per_page', 10))->withQueryString();
 
+        $items = $q->paginate($request->get('per_page', 10))->withQueryString();
+
+        $items->getCollection()->transform(function ($item) {
+            $item->description = strlen($item->description) > 50 ? substr($item->description, 0, 50) . '...' : $item->description;
+            return $item;
+        });
+    
         return response()->json($items);
     }
 

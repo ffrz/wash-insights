@@ -80,7 +80,6 @@ let columns = [
   },
 ];
 
-// TODO: handle non admin role
 if (page.props.auth.user.role != CONSTANTS.USER_ROLE_ADMIN) {
   columns.splice(2, 1);
 }
@@ -121,12 +120,6 @@ const filteredCategories = ref(categories);
 const filterCategories = (val, update) => {
   update(() => {
     let search = val.toLowerCase();
-    // if (search === "") {
-    //   filter.category_id = "all";
-    //   onFilterChange();
-    //   return;
-    // }
-
     filteredCategories.value = categories.filter(item =>
       item.label.toLowerCase().includes(search)
     );
@@ -141,12 +134,6 @@ const filteredSuppliers = ref(suppliers);
 const filterSuppliers = (val, update) => {
   update(() => {
     let search = val.toLowerCase();
-    // if (search === "") {
-    //   filter.supplier_id = "all";
-    //   onFilterChange();
-    //   return;
-    // }
-
     filteredSuppliers.value = suppliers.filter(item =>
       item.label.toLowerCase().includes(search)
     );
@@ -208,9 +195,17 @@ const computedColumns = computed(() => {
           <q-tr :props="props" :class="{ 'inactive': !props.row.active }">
             <q-td key="name" :props="props" class="wrap-column">
               {{ props.row.name }}
+              <div v-if="props.row.category_id" class="text-grey-8"><q-icon name="category" />
+                {{ props.row.category.name }}
+              </div>
+              <div v-if="props.row.supplier_id" class="text-grey-8"><q-icon name="local_shipping" />
+                {{ props.row.supplier.name }}
+              </div>
+              <div v-if="props.row.description"><q-icon name="description" />
+                {{ props.row.description }}
+              </div>
               <template v-if="!$q.screen.gt.sm">
-                <div v-if="props.row.description" class="text-grey-8"><q-icon name="description" /> {{
-                  props.row.description }}</div>
+
               </template>
             </q-td>
             <q-td key="stock" :props="props" class="wrap-column" :class="{
