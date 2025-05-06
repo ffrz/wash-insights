@@ -50,7 +50,7 @@ class ProductCategoryController extends Controller
     public function editor($id = 0)
     {
         allowed_roles([User::Role_Admin]);
-        $item = $id ? ProductCategory::findOrFail($id) : new ProductCategory(['date' => date('Y-m-d')]);
+        $item = $id ? ProductCategory::findOrFail($id) : new ProductCategory();
         return inertia('admin/product-category/Editor', [
             'data' => $item,
         ]);
