@@ -4,16 +4,20 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\ProductCategory;
+use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
     public function index()
     {
-        return inertia('admin/product/Index');
+        return inertia('admin/product/Index', [
+            'categories' => ProductCategory::all(['id', 'name']),
+            'suppliers' => Supplier::all(['id', 'name', 'phone']),
+        ]);
     }
 
     public function data(Request $request)
@@ -28,6 +32,35 @@ class ProductController extends Controller
             $q->where(function ($q) use ($filter) {
                 $q->where('name', 'like', '%' . $filter['search'] . '%');
             });
+        }
+
+        if (!empty($filter['type']) && $filter['type'] != 'all') {
+            $q->where('type', '=', $filter['type']);
+        }
+
+        if (!empty($filter['category_id']) && $filter['category_id'] != 'all') {
+            $q->where('category_id', '=', $filter['category_id']);
+        }
+
+        if (!empty($filter['supplier_id']) && $filter['supplier_id'] != 'all') {
+            $q->where('supplier_id', '=', $filter['supplier_id']);
+        }
+
+        if (!empty($filter['status']) && ($filter['status'] == 'active' || $filter['status'] == 'inactive')) {
+            $q->where('active', '=', $filter['status'] == 'active' ? true : false);
+        }
+
+        if (!empty($filter['stock_status']) && $filter['stock_status'] != 'all') {
+            if ($filter['stock_status'] == 'low') {
+                $q->whereColumn('stock', '<', 'min_stock');
+                $q->where('stock', '!=', 0);
+            } elseif ($filter['stock_status'] == 'out') {
+                $q->where('stock', '=', 0);
+            } elseif ($filter['stock_status'] == 'over') {
+                $q->whereColumn('stock', '>', 'max_stock');
+            } elseif ($filter['stock_status'] == 'ready') {
+                $q->where('stock', '>', 0);
+            }
         }
 
         $q->orderBy($orderBy, $orderType);
@@ -50,9 +83,13 @@ class ProductController extends Controller
     public function editor($id = 0)
     {
         allowed_roles([User::Role_Admin]);
-        $item = $id ? Product::findOrFail($id) : new Product(['date' => date('Y-m-d')]);
+        $item = $id ? Product::findOrFail($id) : new Product(
+            ['active' => 1, 'type' => Product::Type_Stocked]
+        );
         return inertia('admin/product/Editor', [
             'data' => $item,
+            'categories' => ProductCategory::all(['id', 'name']),
+            'suppliers' => Supplier::all(['id', 'name', 'phone']),
         ]);
     }
 
@@ -69,7 +106,6 @@ class ProductController extends Controller
 
         $item = null;
         $message = '';
-        $fields = ['name', 'description'];
 
         $request->validate($rules);
 
@@ -81,8 +117,14 @@ class ProductController extends Controller
             $message = 'product-updated';
         }
 
-        $data = $request->only($fields);
+        $data = $request->all();
+        $data['category_id'] = $data['category_id'] ?? null;
+        $data['supplier_id'] = $data['supplier_id'] ?? '';
         $data['description'] = $data['description'] ?? '';
+        $data['notes'] = $data['notes'] ?? '';
+        $data['stock'] = $data['stock'] ?? 0;
+        $data['min_stock'] = $data['min_stock'] ?? 0;
+        $data['max_stock'] = $data['max_stock'] ?? 0;
 
         $item->fill($data);
         $item->save();

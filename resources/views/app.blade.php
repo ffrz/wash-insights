@@ -21,6 +21,7 @@
     window.CONFIG.APP_VERSION_STR = "{{ config('app.version_str', '1.0.0') }}";
     window.CONSTANTS = <?= json_encode([
           'USER_ROLES' => \App\Models\User::Roles,
+          'PRODUCT_TYPES' => \App\Models\Product::Types,
           'SERVICEORDER_ORDERSTATUSES' => \App\Models\ServiceOrder::OrderStatuses,
           'SERVICEORDER_SERVICESTATUSES' => \App\Models\ServiceOrder::ServiceStatuses,
           'SERVICEORDER_PAYMENTSTATUSES' => \App\Models\ServiceOrder::PaymentStatuses,

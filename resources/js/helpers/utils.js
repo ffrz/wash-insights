@@ -47,6 +47,18 @@ export function create_month_options() {
   ];
 }
 
+export function create_options_from_product_categories(items) {
+  return items.map((item) => {
+    return { 'value': item.id, 'label': `${item.name}` };
+  });
+}
+
+export function create_options_from_suppliers(items) {
+  return items.map((supplier) => {
+    return { 'value': supplier.id, 'label': `#${supplier.id}: ${supplier.name} - ${supplier.phone}` };
+  });
+}
+
 export function create_options(data) {
   return Object.entries(data)
     .map(([key, value]) => ({ 'value': key, 'label': value }));

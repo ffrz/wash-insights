@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Product;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,7 +19,7 @@ return new class extends Migration
             $table->string('name', 100);
             $table->string('barcode', 255)->nullable()->default(null);
             $table->text('description')->nullable(false);
-            $table->enum('type', ['nonstocked', 'stocked', 'service'])->nullable();
+            $table->enum('type', array_keys(Product::Types))->nullable();
             $table->boolean('active')->default(true);
             $table->decimal('cost',  10, 2)->default(0);
             $table->decimal('price', 10, 2)->default(0);

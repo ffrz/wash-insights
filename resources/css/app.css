@@ -99,6 +99,8 @@ a:hover {
 .custom-select .q-field__native {
   flex-wrap: nowrap !important;
 }
+
+
 .custom-select .q-field__control-container {
   white-space: nowrap;
 }
@@ -230,4 +232,16 @@ table.detail tr:nth-child(even) td {
 .q-table td .q-btn,
 .q-table__bottom * {
   color: #555;
+}
+
+.q-table .q-tr.inactive {
+  background-color: #fcc !important;
+}
+
+.q-table .low-stock {
+  color: red;
+}
+
+.q-table .over-stock {
+  color: orange;
 }

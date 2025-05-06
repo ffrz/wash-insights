@@ -8,7 +8,18 @@ const title = (!!page.props.data.id ? "Edit" : "Tambah") + " Produk";
 
 const form = useForm({
   id: page.props.data.id,
+  category_id: page.props.data.category_id,
+  supplier_id: page.props.data.supplier_id,
+  type: page.props.data.type,
   name: page.props.data.name,
+  barcode: page.props.data.barcode,
+  stock: page.props.data.stock,
+  min_stock: page.props.data.min_stock,
+  max_stock: page.props.data.max_stock,
+  uom: page.props.data.uom,
+  cost: page.props.data.cost,
+  price: page.props.data.price,
+  active: page.props.data.active,
   description: page.props.data.description,
   notes: page.props.data.notes,
 });
@@ -31,13 +42,13 @@ const submit = () => handleSubmit({ form, url: route('admin.product.save') });
                 :disable="form.processing" :error-message="form.errors.name" :rules="[
                   (val) => (val && val.length > 0) || 'Nama harus diisi.',
                 ]" />
+              <q-input v-model.trim="form.description" type="textarea" autogrow counter maxlength="1000"
+                label="Deskripsi" lazy-rules :disable="form.processing" :error="!!form.errors.description"
+                :error-message="form.errors.description" />
               <div style="margin-left: -10px;">
                 <q-checkbox class="full-width q-pl-none" v-model="form.active" :disable="form.processing"
                   label="Aktif" />
               </div>
-              <q-input v-model.trim="form.description" type="textarea" autogrow counter maxlength="1000"
-                label="Deskripsi" lazy-rules :disable="form.processing" :error="!!form.errors.description"
-                :error-message="form.errors.description" />
               <q-input v-model.trim="form.notes" type="textarea" autogrow counter maxlength="1000" label="Catatan"
                 lazy-rules :disable="form.processing" :error="!!form.errors.notes" :error-message="form.errors.notes" />
             </q-card-section>

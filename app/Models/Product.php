@@ -27,6 +27,19 @@ class Product extends Model
     ];
 
     /**
+     * ServiceStatuses
+     */
+    const Type_Stocked = 'stocked';
+    const Type_NonStocked = 'nonstocked';
+    const Type_Service = 'service';
+
+    const Types = [
+        self::Type_Stocked => 'Stok',
+        self::Type_NonStocked => 'Non Stok',
+        self::Type_Service => 'Servis',
+    ];
+
+    /**
      * Get the category for the product.
      */
     public function category()
