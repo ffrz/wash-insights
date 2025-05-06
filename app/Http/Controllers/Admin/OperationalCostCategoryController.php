@@ -49,7 +49,7 @@ class OperationalCostCategoryController extends Controller
     public function editor($id = 0)
     {
         allowed_roles([User::Role_Admin]);
-        $item = $id ? OperationalCostCategory::findOrFail($id) : new OperationalCostCategory(['date' => date('Y-m-d')]);
+        $item = $id ? OperationalCostCategory::findOrFail($id) : new OperationalCostCategory();
         return inertia('admin/operational-cost-category/Editor', [
             'data' => $item,
         ]);
@@ -57,37 +57,28 @@ class OperationalCostCategoryController extends Controller
 
     public function save(Request $request)
     {
-        $rules = [
+        $item = $request->id ? OperationalCostCategory::findOrFail($request->id) : new OperationalCostCategory();
+
+        $validated = $request->validate([
             'name' => [
                 'required',
                 'max:255',
-                Rule::unique('operational_cost_categories', 'name')->ignore($request->id), // agar saat update tidak dianggap duplikat sendiri
+                Rule::unique('operational_cost_categories', 'name')->ignore($item->id),
             ],
             'description' => 'nullable|max:1000',
-        ];
+        ]);
 
-        $item = null;
-        $message = '';
-        $fields = ['name', 'description'];
+        $item->fill([
+            'name' => $validated['name'],
+            'description' => $data['description'] ?? '',
+        ]);
 
-        $request->validate($rules);
-
-        if (!$request->id) {
-            $item = new OperationalCostCategory();
-            $message = 'operational-cost-category-created';
-        } else {
-            $item = OperationalCostCategory::findOrFail($request->post('id', 0));
-            $message = 'operational-cost-category-updated';
-        }
-
-        $data = $request->only($fields);
-        $data['description'] = $data['description'] ?? '';
-
-        $item->fill($data);
         $item->save();
 
+        $messageKey = $request->id ? 'operational-cost-category-updated' : 'operational-cost-category-created';
+
         return redirect(route('admin.operational-cost-category.index'))
-            ->with('success', __("messages.$message", ['name' => $item->name]));
+            ->with('success', __("messages.$messageKey", ['name' => $item->name]));
     }
 
     public function delete($id)
