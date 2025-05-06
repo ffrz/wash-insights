@@ -58,37 +58,29 @@ class ProductCategoryController extends Controller
 
     public function save(Request $request)
     {
-        $rules = [
+        $item = $request->id ? ProductCategory::findOrFail($request->id) : new ProductCategory();
+
+        $validated = $request->validate([
             'name' => [
                 'required',
                 'max:255',
-                Rule::unique('product_categories', 'name')->ignore($request->id), // agar saat update tidak dianggap duplikat sendiri
+                Rule::unique('product_categories', 'name')->ignore($item->id),
             ],
             'description' => 'nullable|max:1000',
-        ];
+        ]);
 
-        $item = null;
-        $message = '';
-        $fields = ['name', 'description'];
+        $item->fill([
+            'name' => $validated['name'],
+            'description' => $validated['description'] ?? '',
+        ]);
 
-        $request->validate($rules);
-
-        if (!$request->id) {
-            $item = new ProductCategory();
-            $message = 'product-category-created';
-        } else {
-            $item = ProductCategory::findOrFail($request->post('id', 0));
-            $message = 'product-category-updated';
-        }
-
-        $data = $request->only($fields);
-        $data['description'] = $data['description'] ?? '';
-
-        $item->fill($data);
         $item->save();
 
-        return redirect(route('admin.product-category.index'))
-            ->with('success', __("messages.$message", ['name' => $item->name]));
+        $messageKey = $request->id ? 'product-category-updated' : 'product-category-created';
+
+        return redirect()
+            ->route('admin.product-category.index')
+            ->with('success', __("messages.$messageKey", ['name' => $item->name]));
     }
 
     public function delete($id)

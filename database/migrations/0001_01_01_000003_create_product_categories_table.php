@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name', 100)->unique();
             $table->text('description')->nullable(false);
-            $table->boolean('active')->default(true);
 
             $table->datetime('created_datetime')->nullable()->default(null);
             $table->datetime('updated_datetime')->nullable()->default(null);
