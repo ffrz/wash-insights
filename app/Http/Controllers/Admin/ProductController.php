@@ -86,7 +86,9 @@ class ProductController extends Controller
         $item = Product::findOrFail($id);
         $item->id = null;
         return inertia('admin/product/Editor', [
-            'data' => $item
+            'data' => $item,
+            'categories' => ProductCategory::all(['id', 'name']),
+            'suppliers' => Supplier::all(['id', 'name', 'phone']),
         ]);
     }
 
