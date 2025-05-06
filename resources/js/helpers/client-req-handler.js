@@ -35,11 +35,11 @@ export function handleSubmit(data) {
       },
       onError: (error) => {
         _scrollToFirstError();
-        const message = typeof error.message === 'string' && error.message.length > 0
-          ? error.message
-          : 'Terjadi kesalahan saat memproses permintaan.';
+        if (!error || typeof (error.message) !== 'string' || error.message.length === 0)
+          return;
+
         Notify.create({
-          message: message,
+          message: error.message,
           icon: "info",
           color: "negative",
           actions: [
