@@ -176,7 +176,7 @@ const computedColumns = computed(() => {
         <template v-slot:body="props">
           <q-tr :props="props" :class="!props.row.active ? 'bg-red-1' : ''" class="cursor-pointer" @click="onRowClicked(props.row)">
             <q-td key="name" :props="props" class="wrap-column">
-              <div><q-icon name="person" /> {{ props.row.name }}</div>
+              <div><q-icon name="person" v-if="$q.screen.lt.md" /> {{ props.row.name }}</div>
               <template v-if="$q.screen.lt.md">
                 <div><q-icon name="phone" /> {{ props.row.phone }}</div>
                 <div><q-icon name="home_pin" /> {{ props.row.address }}</div>
