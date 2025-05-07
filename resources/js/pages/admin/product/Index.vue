@@ -111,15 +111,15 @@ const onFilterChange = () => {
   fetchItems();
 };
 
-const { filteredCategories, filterCategories} = useProductCategoryFilter(page.props.categories, true);
-const { filteredSuppliers, filterSuppliers} = useSupplierFilter(page.props.suppliers, true);
+const { filteredCategories, filterCategories } = useProductCategoryFilter(page.props.categories, true);
+const { filteredSuppliers, filterSuppliers } = useSupplierFilter(page.props.suppliers, true);
 
 const computedColumns = computed(() => {
   let computedColumns = [...columns];
   if (!showCostColumn.value) {
     computedColumns.splice(2, 1)
   }
-  
+
   if ($q.screen.gt.sm) return computedColumns;
 
   return computedColumns.filter((col) => col.name === "name" || col.name === "action");
@@ -175,7 +175,8 @@ const computedColumns = computed(() => {
           </div>
         </template>
         <template v-slot:body="props">
-          <q-tr :props="props" :class="{ 'inactive': !props.row.active }">
+          <q-tr :props="props" :class="{ 'inactive': !props.row.active }" class="cursor-pointer"
+            @click="router.get(route('admin.product.detail', props.row.id))">
             <q-td key="name" :props="props" class="wrap-column">
               {{ props.row.name }}
               <div v-if="props.row.category_id" class="text-grey-8"><q-icon name="category" />

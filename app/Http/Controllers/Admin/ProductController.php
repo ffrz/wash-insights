@@ -20,6 +20,14 @@ class ProductController extends Controller
         ]);
     }
 
+    public function detail($id = 0)
+    {
+        $item = Product::with(['category', 'supplier', 'createdBy', 'updatedBy'])->findOrFail($id);
+        return inertia('admin/product/Detail', [
+            'data' => $item,
+        ]);
+    }
+
     public function data(Request $request)
     {
         $orderBy = $request->get('order_by', 'date');

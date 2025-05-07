@@ -10,6 +10,8 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
+        'product_id',
+        'product_name',
         'category_id',
         'supplier_id',
         'name',
@@ -53,6 +55,16 @@ class Product extends Model
     public function supplier()
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by_uid');
+    }
+
+    public function updatedBy()
+    {
+        return $this->belongsTo(User::class, 'updated_by_uid');
     }
 
     public static function activeProductCount()

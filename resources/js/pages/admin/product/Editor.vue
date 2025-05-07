@@ -34,14 +34,7 @@ const submit = () => handleSubmit({ form, url: route('admin.product.save') });
 const { filteredCategories, filterCategories } = useProductCategoryFilter(page.props.categories);
 const { filteredSuppliers, filterSuppliers } = useSupplierFilter(page.props.suppliers);
 
-// const margin = ref(0);
-// const calculateMargin = () => {
-//   if (form.price > 0) {
-//     margin.value = ((form.price - form.cost) / form.price) * 100;
-//   } else {
-//     margin.value = 0;
-//   }
-// };
+
 const margin = computed(() => {
   return form.price > 0 ? ((form.price - form.cost) / form.price) * 100 : 0;
 });

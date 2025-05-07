@@ -15,6 +15,9 @@ return new class extends Migration
         Schema::create('stock_movements', function (Blueprint $table) {
             $table->id();
 
+            $table->unsignedBigInteger('product_id');
+            $table->string('product_name', 100)->default(''); // untuk historical
+
             $table->morphs('ref');
             $table->morphs('ref_detail');
 
@@ -33,6 +36,7 @@ return new class extends Migration
             $table->unsignedBigInteger('created_by_uid')->nullable()->default(null);
 
             $table->foreign('created_by_uid')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
 
             $table->index('ref_id');
             $table->index('ref_detail_id');

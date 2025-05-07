@@ -65,6 +65,7 @@ Route::middleware([Auth::class])->group(function () {
             Route::get('edit/{id}', [ProductController::class, 'editor'])->name('admin.product.edit');
             Route::post('save', [ProductController::class, 'save'])->name('admin.product.save');
             Route::post('delete/{id}', [ProductController::class, 'delete'])->name('admin.product.delete');
+            Route::get('detail/{id}', [ProductController::class, 'detail'])->name('admin.product.detail');
         });
 
         Route::prefix('product-categories')->group(function () {
