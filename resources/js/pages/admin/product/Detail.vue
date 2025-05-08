@@ -290,7 +290,7 @@ const computedColumns = computed(() => {
                           </div>
                           <div :class="props.row.quantity < 0 ? 'text-red-10' : (props.row.quantity > 0 ? 'text-green-10' : '')">
                             <q-icon :name="props.row.quantity < 0 ? 'arrow_downward' : (props.row.quantity > 0 ? 'arrow_upward' : '')" />
-                            {{ props.row.quantity }} {{ props.row.uom }}
+                            {{ formatNumber(props.row.quantity) }}
                           </div>
                         </template>
                       </q-td>
@@ -303,7 +303,7 @@ const computedColumns = computed(() => {
                       <q-td key="quantity" :props="props">
                         <div :class="props.row.quantity < 0 ? 'text-red-10' : (props.row.quantity > 0 ? 'text-green-10' : '')">
                           <q-icon :name="props.row.quantity < 0 ? 'arrow_downward' : (props.row.quantity > 0 ? 'arrow_upward' : '')" />
-                          {{ props.row.quantity }} {{ props.row.uom }}
+                            {{ formatNumber(props.row.quantity) }}
                         </div>
                       </q-td>
                     </q-tr>

@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Models\StockMovement;
 use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
@@ -82,7 +84,7 @@ class ProductController extends Controller
             $item->description = strlen($item->description) > 50 ? substr($item->description, 0, 50) . '...' : $item->description;
             return $item;
         });
-    
+
         return response()->json($items);
     }
 
@@ -162,7 +164,23 @@ class ProductController extends Controller
             'notes' => $data['notes'] ?? '',
         ]);
 
+        DB::beginTransaction();
+        if ($request->id) {
+            $oldStock = $item->getOriginal('stock');
+            $newStock = $item->stock;
+            $diff = $newStock - $oldStock;
+
+            if ($oldStock != $newStock) {
+                StockMovement::create([
+                    'ref_type' => StockMovement::RefType_ManualAdjustment,
+                    'product_id' => $item->id,
+                    'quantity' => $diff,
+                ]);
+            }
+        }
+
         $item->save();
+        DB::commit();
 
         $messageKey = $request->id ? 'product-updated' : 'product-created';
 

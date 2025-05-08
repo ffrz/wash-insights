@@ -12,10 +12,10 @@ class StockMovement extends Model
      * @var array
      */
     protected $fillable = [
+        'product_id',
         'ref_id',
         'ref_type',
         'quantity',
-        'uom',
         'created_datetime',
         'created_by_uid',
     ];
