@@ -14,7 +14,8 @@ class StockMovementController extends Controller
         $orderType = $request->get('order_type', 'desc');
         $filter = $request->get('filter', []);
 
-        $q = StockMovement::query();
+        $q = StockMovement::with(['createdBy']);
+        $q->where('product_id', $request->get('product_id', 0));
 
         if (!empty($filter['search'])) {
             $q->where(function ($q) use ($filter) {
@@ -56,7 +57,7 @@ class StockMovementController extends Controller
 
         $q->orderBy($orderBy, $orderType);
 
-        $items = $q->paginate($request->get('per_page', 10))->withQueryString();
+        $items = $q->paginate($request->get('per_page', 10))->withQueryString();        
     
         return response()->json($items);
     }

@@ -34,13 +34,6 @@ const columns = [
     sortable: true,
   },
   {
-    name: "datetime",
-    label: "Waktu",
-    field: "datetime",
-    align: "left",
-    sortable: true,
-  },
-  {
     name: "type",
     label: "Jenis",
     field: "type",
@@ -255,10 +248,10 @@ const computedColumns = computed(() => {
               </q-tab-panel>
 
               <q-tab-panel name="history">
-                <q-table flat bordered square color="primary" class="full-height-table full-height-table2 va-top wash-order-list"
-                  row-key="id" virtual-scroll v-model:pagination="pagination" :filter="filter.search" :loading="loading"
-                  :columns="computedColumns" :rows="rows" :rows-per-page-options="[10, 25, 50]" @request="fetchItems"
-                  binary-state-sort>
+                <q-table flat bordered square color="primary"
+                  class="full-height-table full-height-table2 va-top wash-order-list" row-key="id" virtual-scroll
+                  v-model:pagination="pagination" :filter="filter.search" :loading="loading" :columns="computedColumns"
+                  :rows="rows" :rows-per-page-options="[10, 25, 50]" @request="fetchItems" binary-state-sort>
                   <template v-slot:loading>
                     <q-inner-loading showing color="red" />
                   </template>
@@ -278,32 +271,30 @@ const computedColumns = computed(() => {
                       <q-td key="id" :props="props">
                         <div class="flex q-gutter-sm">
                           <div><b>#{{ props.row.id }}</b></div>
-                          <template v-if="$q.screen.lt.md">
-                            <div class="">-
-                              {{ $dayjs(new Date(props.row.created_datetime)).format("DD/MM/YYYY") }}
-                            </div>
-                          </template>
+                          <div>- {{ $dayjs(new Date(props.row.created_datetime)).format("DD/MM/YYYY hh:mm:ss") }}</div>
+                          <div>- {{ props.row.created_by ? props.row.created_by.username : '--' }}</div>
                         </div>
                         <template v-if="$q.screen.lt.md">
                           <div class="">
                             {{ $CONSTANTS.STOCKMOVEMENT_REFTYPES[props.row.ref_type] }}
                           </div>
-                          <div :class="props.row.quantity < 0 ? 'text-red-10' : (props.row.quantity > 0 ? 'text-green-10' : '')">
-                            <q-icon :name="props.row.quantity < 0 ? 'arrow_downward' : (props.row.quantity > 0 ? 'arrow_upward' : '')" />
+                          <div
+                            :class="props.row.quantity < 0 ? 'text-red-10' : (props.row.quantity > 0 ? 'text-green-10' : '')">
+                            <q-icon
+                              :name="props.row.quantity < 0 ? 'arrow_downward' : (props.row.quantity > 0 ? 'arrow_upward' : '')" />
                             {{ formatNumber(props.row.quantity) }}
                           </div>
                         </template>
-                      </q-td>
-                      <q-td key="datetime" :props="props">
-                        {{ props.row.created_datetime }}
                       </q-td>
                       <q-td key="type" :props="props">
                         {{ $CONSTANTS.STOCKMOVEMENT_REFTYPES[props.row.ref_type] }}
                       </q-td>
                       <q-td key="quantity" :props="props">
-                        <div :class="props.row.quantity < 0 ? 'text-red-10' : (props.row.quantity > 0 ? 'text-green-10' : '')">
-                          <q-icon :name="props.row.quantity < 0 ? 'arrow_downward' : (props.row.quantity > 0 ? 'arrow_upward' : '')" />
-                            {{ formatNumber(props.row.quantity) }}
+                        <div
+                          :class="props.row.quantity < 0 ? 'text-red-10' : (props.row.quantity > 0 ? 'text-green-10' : '')">
+                          <q-icon
+                            :name="props.row.quantity < 0 ? 'arrow_downward' : (props.row.quantity > 0 ? 'arrow_upward' : '')" />
+                          {{ formatNumber(props.row.quantity) }}
                         </div>
                       </q-td>
                     </q-tr>

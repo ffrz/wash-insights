@@ -14,8 +14,10 @@ class Model extends \Illuminate\Database\Eloquent\Model
         parent::boot();
 
         static::creating(function ($model) {
-            $model->created_datetime = current_datetime();
-            $model->created_by_uid = Auth::id();
+            if (Schema::hasColumn($model->getTable(), 'created_datetime')) {
+                $model->created_datetime = current_datetime();
+                $model->created_by_uid = Auth::id();
+            }
             return true;
         });
 

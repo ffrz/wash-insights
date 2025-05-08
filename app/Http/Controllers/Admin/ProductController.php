@@ -165,6 +165,9 @@ class ProductController extends Controller
         ]);
 
         DB::beginTransaction();
+
+        $item->save();
+
         if ($request->id) {
             $oldStock = $item->getOriginal('stock');
             $newStock = $item->stock;
@@ -178,8 +181,14 @@ class ProductController extends Controller
                 ]);
             }
         }
-
-        $item->save();
+        else {
+            StockMovement::create([
+                'ref_type' => StockMovement::RefType_InitialStock,
+                'product_id' => $item->id,
+                'quantity' => $item->stock,
+            ]);
+        }
+        
         DB::commit();
 
         $messageKey = $request->id ? 'product-updated' : 'product-created';
