@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\OperationalCostController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\ServiceOrderController;
+use App\Http\Controllers\Admin\StockAdjustmentController;
 use App\Http\Controllers\Admin\StockMovementController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\UserController;
@@ -67,6 +68,16 @@ Route::middleware([Auth::class])->group(function () {
             Route::post('save', [ProductController::class, 'save'])->name('admin.product.save');
             Route::post('delete/{id}', [ProductController::class, 'delete'])->name('admin.product.delete');
             Route::get('detail/{id}', [ProductController::class, 'detail'])->name('admin.product.detail');
+        });
+
+        Route::prefix('stock-adjustments')->group(function () {
+            Route::get('', [StockAdjustmentController::class, 'index'])->name('admin.stock-adjustment.index');
+            Route::get('data', [StockAdjustmentController::class, 'data'])->name('admin.stock-adjustment.data');
+            Route::get('create', [StockAdjustmentController::class, 'editor'])->name('admin.stock-adjustment.create');
+            Route::get('edit/{id}', [StockAdjustmentController::class, 'editor'])->name('admin.stock-adjustment.edit');
+            Route::post('save', [StockAdjustmentController::class, 'save'])->name('admin.stock-adjustment.save');
+            Route::post('delete/{id}', [StockAdjustmentController::class, 'delete'])->name('admin.stock-adjustment.delete');
+            Route::get('detail/{id}', [StockAdjustmentController::class, 'detail'])->name('admin.stock-adjustment.detail');
         });
 
         Route::prefix('stock-movements')->group(function () {

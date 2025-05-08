@@ -147,15 +147,30 @@ onMounted(() => {
               <q-item-label>{{ $t("customers") }}</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item clickable v-ripple :active="$page.url.startsWith('/admin/suppliers')"
-            @click="router.get(route('admin.supplier.index'))">
-            <q-item-section avatar>
-              <q-icon name="groups_2" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ $t("suppliers") }}</q-item-label>
-            </q-item-section>
-          </q-item>
+
+          <q-expansion-item
+            v-if="$page.props.auth.user.role == $CONSTANTS.USER_ROLE_ADMIN || $page.props.auth.user.role == $CONSTANTS.USER_ROLE_CASHIER"
+            expand-separator icon="local_shipping" label="Pembelian"
+            :default-opened="$page.url.startsWith('/admin/purchase-orders') || $page.url.startsWith('/admin/suppliers')">
+            <q-item class="subnav" clickable v-ripple :active="$page.url.startsWith('/admin/purchase-orders')"
+              @click="router.get(route('admin.purchase-order.index'))">
+              <q-item-section avatar>
+                <q-icon name="shopping_cart" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ $t("purchase_orders") }}</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item class="subnav" clickable v-ripple :active="$page.url.startsWith('/admin/suppliers')"
+              @click="router.get(route('admin.supplier.index'))">
+              <q-item-section avatar>
+                <q-icon name="people" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ $t("suppliers") }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-expansion-item>
           <q-expansion-item
             v-if="$page.props.auth.user.role == $CONSTANTS.USER_ROLE_ADMIN || $page.props.auth.user.role == $CONSTANTS.USER_ROLE_CASHIER"
             expand-separator icon="inventory_2" label="Inventori"
@@ -176,6 +191,15 @@ onMounted(() => {
               </q-item-section>
               <q-item-section>
                 <q-item-label>{{ $t("product_categories") }}</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item class="subnav" clickable v-ripple :active="$page.url.startsWith('/admin/stock-adjustments')"
+              @click="router.get(route('admin.stock-adjustment.index'))">
+              <q-item-section avatar>
+                <q-icon name="swap_vert" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ $t("stock_adjustment") }}</q-item-label>
               </q-item-section>
             </q-item>
           </q-expansion-item>
