@@ -78,8 +78,6 @@ class ProductController extends Controller
 
         $items = $q->paginate($request->get('per_page', 10))->withQueryString();
 
-        $items = $q->paginate($request->get('per_page', 10))->withQueryString();
-
         $items->getCollection()->transform(function ($item) {
             $item->description = strlen($item->description) > 50 ? substr($item->description, 0, 50) . '...' : $item->description;
             return $item;

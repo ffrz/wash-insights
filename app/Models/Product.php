@@ -5,10 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Product Model
+ */
 class Product extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     */
     protected $fillable = [
         'product_id',
         'product_name',
@@ -29,7 +35,7 @@ class Product extends Model
     ];
 
     /**
-     * ServiceStatuses
+     * Product types.
      */
     const Type_Stocked = 'stocked';
     const Type_NonStocked = 'nonstocked';
@@ -57,16 +63,25 @@ class Product extends Model
         return $this->belongsTo(Supplier::class);
     }
 
+    /**
+     * Get the author of the product.
+     */
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by_uid');
     }
 
+    /**
+     * Get the updater of the product.
+     */
     public function updatedBy()
     {
         return $this->belongsTo(User::class, 'updated_by_uid');
     }
 
+    /**
+     * Get the number of active products.
+     */
     public static function activeProductCount()
     {
         return DB::select(

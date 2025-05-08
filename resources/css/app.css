@@ -177,6 +177,10 @@ table.detail tr:nth-child(even) td {
   height: calc(100vh - 67px);
 }
 
+.full-height-table2 {
+  height: calc(100vh - 84px - 67px) !important;
+}
+
 .full-height-table .q-table__top,
 .full-height-table .q-table__bottom,
 .full-height-table thead tr:first-child th {

@@ -6,6 +6,7 @@ import { ref } from "vue";
 const page = usePage();
 const title = `Rincian Order Cuci #${page.props.data.id}`;
 const tab = ref("main");
+
 </script>
 
 <template>

@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\OperationalCostController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\ServiceOrderController;
+use App\Http\Controllers\Admin\StockMovementController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\WashOrderController;
@@ -66,6 +67,10 @@ Route::middleware([Auth::class])->group(function () {
             Route::post('save', [ProductController::class, 'save'])->name('admin.product.save');
             Route::post('delete/{id}', [ProductController::class, 'delete'])->name('admin.product.delete');
             Route::get('detail/{id}', [ProductController::class, 'detail'])->name('admin.product.detail');
+        });
+
+        Route::prefix('stock-movements')->group(function () {
+            Route::get('data', [StockMovementController::class, 'data'])->name('admin.stock-movement.data');
         });
 
         Route::prefix('product-categories')->group(function () {

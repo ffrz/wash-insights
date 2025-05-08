@@ -22,6 +22,7 @@
     window.CONSTANTS = <?= json_encode([
           'USER_ROLES' => \App\Models\User::Roles,
           'PRODUCT_TYPES' => \App\Models\Product::Types,
+          'STOCKMOVEMENT_REFTYPES' => \App\Models\StockMovement::RefTypes,
           'SERVICEORDER_ORDERSTATUSES' => \App\Models\ServiceOrder::OrderStatuses,
           'SERVICEORDER_SERVICESTATUSES' => \App\Models\ServiceOrder::ServiceStatuses,
           'SERVICEORDER_PAYMENTSTATUSES' => \App\Models\ServiceOrder::PaymentStatuses,

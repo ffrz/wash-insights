@@ -1,11 +1,82 @@
 <script setup>
-import { formatNumber } from "@/helpers/utils";
+import { handleFetchItems } from "@/helpers/client-req-handler";
+import { formatNumber, getQueryParams } from "@/helpers/utils";
 import { router, usePage } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { useQuasar } from "quasar";
+import { computed, onMounted, reactive, ref } from "vue";
 
 const page = usePage();
 const title = `Rincian Produk #${page.props.data.id}`;
 const tab = ref("main");
+const rows = ref([]);
+const loading = ref(true);
+const filter = reactive({
+  // search: "",
+  // order_status: "all",
+  // payment_status: "all",
+  // service_status: "all",
+  ...getQueryParams()
+});
+const pagination = ref({
+  page: 1,
+  rowsPerPage: 10,
+  rowsNumber: 10,
+  sortBy: "id",
+  descending: true,
+});
+
+const columns = [
+  {
+    name: "id",
+    label: "#",
+    field: "id",
+    align: "left",
+    sortable: true,
+  },
+  {
+    name: "datetime",
+    label: "Waktu",
+    field: "datetime",
+    align: "left",
+    sortable: true,
+  },
+  {
+    name: "type",
+    label: "Jenis",
+    field: "type",
+    align: "center",
+    sortable: true,
+  },
+  {
+    name: "quantity",
+    label: "Jumlah",
+    field: "quantity",
+    align: "center",
+    sortable: true,
+  },
+
+];
+
+onMounted(() => {
+  fetchItems();
+});
+
+const fetchItems = (props = null) =>
+  handleFetchItems({
+    pagination,
+    filter,
+    props,
+    rows,
+    url: route("admin.stock-movement.data", { product_id: page.props.data.id }),
+    loading,
+  });
+
+const $q = useQuasar();
+const computedColumns = computed(() => {
+  if ($q.screen.gt.sm) return columns;
+  return columns.filter((col) => col.name === "id");
+});
+
 </script>
 
 <template>
@@ -184,6 +255,60 @@ const tab = ref("main");
               </q-tab-panel>
 
               <q-tab-panel name="history">
+                <q-table flat bordered square color="primary" class="full-height-table full-height-table2 va-top wash-order-list"
+                  row-key="id" virtual-scroll v-model:pagination="pagination" :filter="filter.search" :loading="loading"
+                  :columns="computedColumns" :rows="rows" :rows-per-page-options="[10, 25, 50]" @request="fetchItems"
+                  binary-state-sort>
+                  <template v-slot:loading>
+                    <q-inner-loading showing color="red" />
+                  </template>
+
+                  <template v-slot:no-data="{ icon, message, filter }">
+                    <div class="full-width row flex-center text-grey-8 q-gutter-sm">
+                      <q-icon size="2em" name="sentiment_dissatisfied" />
+                      <span>
+                        {{ message }}
+                        {{ filter ? " with term " + filter : "" }}</span>
+                      <q-icon size="2em" :name="filter ? 'filter_b_and_w' : icon" />
+                    </div>
+                  </template>
+
+                  <template v-slot:body="props">
+                    <q-tr :props="props">
+                      <q-td key="id" :props="props">
+                        <div class="flex q-gutter-sm">
+                          <div><b>#{{ props.row.id }}</b></div>
+                          <template v-if="$q.screen.lt.md">
+                            <div class="">-
+                              {{ $dayjs(new Date(props.row.created_datetime)).format("DD/MM/YYYY") }}
+                            </div>
+                          </template>
+                        </div>
+                        <template v-if="$q.screen.lt.md">
+                          <div class="">
+                            {{ $CONSTANTS.STOCKMOVEMENT_REFTYPES[props.row.ref_type] }}
+                          </div>
+                          <div :class="props.row.quantity < 0 ? 'text-red-10' : (props.row.quantity > 0 ? 'text-green-10' : '')">
+                            <q-icon :name="props.row.quantity < 0 ? 'arrow_downward' : (props.row.quantity > 0 ? 'arrow_upward' : '')" />
+                            {{ props.row.quantity }} {{ props.row.uom }}
+                          </div>
+                        </template>
+                      </q-td>
+                      <q-td key="datetime" :props="props">
+                        {{ props.row.created_datetime }}
+                      </q-td>
+                      <q-td key="type" :props="props">
+                        {{ $CONSTANTS.STOCKMOVEMENT_REFTYPES[props.row.ref_type] }}
+                      </q-td>
+                      <q-td key="quantity" :props="props">
+                        <div :class="props.row.quantity < 0 ? 'text-red-10' : (props.row.quantity > 0 ? 'text-green-10' : '')">
+                          <q-icon :name="props.row.quantity < 0 ? 'arrow_downward' : (props.row.quantity > 0 ? 'arrow_upward' : '')" />
+                          {{ props.row.quantity }} {{ props.row.uom }}
+                        </div>
+                      </q-td>
+                    </q-tr>
+                  </template>
+                </q-table>
 
               </q-tab-panel>
             </q-tab-panels>
