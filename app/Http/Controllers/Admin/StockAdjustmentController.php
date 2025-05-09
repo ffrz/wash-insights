@@ -98,7 +98,7 @@ class StockAdjustmentController extends Controller
             return redirect(route('admin.stock-adjustment.editor', [
                 'id' => $item->id
             ]))->with([
-                'message' => __('Penyesuaian stok dibuat', ['id' => $item->id])
+                'message' => __('messages.stock-adjustment-created', ['id' => $item->id])
             ]);
         }
 
@@ -158,15 +158,21 @@ class StockAdjustmentController extends Controller
         $total_cost = 0;
         $total_price = 0;
 
+        $stored_details = StockAdjustmentDetail::where('parent_id', $item->id)->get()->keyBy('id');
+
         foreach ($details as $d) {
-            $detail = StockAdjustmentDetail::find($d['id']);
-            $detail->new_quantity = $d['new_quantity'];
+            $detail = $stored_details[$d['id']];
+            $detail->new_quantity = floatval($d['new_quantity']);
             $detail->balance = $detail->new_quantity - $detail->old_quantity;
             $detail->subtotal_cost = $detail->balance * $detail->cost;
             $detail->subtotal_price = $detail->balance * $detail->price;
             $detail->save();
 
             if ($request->post('action') === 'close') {
+                // update stok
+                DB::update('UPDATE products SET stock=? where id=?', [$detail->new_quantity, $detail->product_id]);
+
+                // simpan riwayat perubahan stok
                 $stockMovement = new StockMovement([
                     'product_id' => $detail->product_id,
                     'ref_id' => $detail->id,
@@ -198,7 +204,7 @@ class StockAdjustmentController extends Controller
         return redirect(route($next_url, [
             'id' => $item->id
         ]),)->with([
-            'message' => 'Berhasil Disimpan'
+            'message' => __('messages.stock-adjustment-saved', ['id' => $item->id])
         ]);
     }
 
@@ -208,39 +214,33 @@ class StockAdjustmentController extends Controller
 
         $item = StockAdjustment::findOrFail($id);
 
-        // TODO:
-        // jika statusnya selesai, maka stock akan dikembalikan
-        // yaitu menjumlahkan stok aktual dengan stok yang dikurangi atau ditambah
-        // pada penyesuaian stok ini
-        // hapus juga semua data di stock_movements
+        DB::beginTransaction();
 
         if ($item->status == StockAdjustment::Status_Closed) {
-            DB::beginTransaction();
+            $details = StockAdjustmentDetail::where('parent_id', $item->id)->get()->keyBy('product_id');
 
-            $details = StockAdjustmentDetail::where('parent_id', $item->id)->get()->byKey('product_id');
+            // Ambil produk terkait
+            $products = Product::whereIn('id', array_keys($details->all()))->get();
 
-            $products = Product::whereIn('id', array_keys($details))->get();
-
+            // Restore stock
             foreach ($products as $product) {
-                $product->stock += $details[$product->id]->quantity;
+                $detail = $details[$product->id];
+                $product->stock += (-$detail->balance);
+                $product->save();
+
+                // Hapus stock movement terkait detail ini
+                DB::delete(
+                    'DELETE FROM stock_movements WHERE ref_type = ? AND ref_id = ?',
+                    [StockMovement::RefType_StockAdjustment, $detail->id]
+                );
             }
-
-            // foreach ($details as $detail) {
-            //     DB::query('DELETE FROM stock_movements where ref_type=? and ref_id=?', [
-            //         StockMovement::RefType_StockAdjustment,
-            //         $detail->id,
-            //     ]);
-            // }
-
-            // stock movement history juga perlu dihapus dong!
-            // foreach ($details as $detail) {
-
-            //     $detail->delete();
-            // }
-            $item->delete();
-
-            DB::commit();
         }
+
+        DB::delete('delete from stock_adjustment_details where parent_id=?', [$item->id]);
+
+        $item->delete();
+
+        DB::commit();
 
         return response()->json([
             'message' => __('messages.stock-adjustment-deleted', ['id' => $item->id])
