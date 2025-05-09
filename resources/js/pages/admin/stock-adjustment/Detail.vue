@@ -49,11 +49,16 @@ const columns = [
     format: (val) => formatNumber(val)
   },
   {
-    name: "money_balance",
-    label: "Selisih Harga",
-    field: "money_balance",
+    name: "cost_balance",
+    label: "Selisih Modal",
+    field: "cost_balance",
     align: "right",
-    format: (val, row) => formatNumber(row.subtotal_cost) + ' / ' + formatNumber(row.subtotal_price)
+  },
+  {
+    name: "price_balance",
+    label: "Selisih Harga",
+    field: "price_balance",
+    align: "right",
   },
   {
     name: "notes",
@@ -143,14 +148,20 @@ const computedColumns = computed(() => {
                     <td>Total Modal</td>
                     <td>:</td>
                     <td>
-                      Rp. {{ formatNumber(page.props.data.total_cost) }}
+                      <div
+                        :class="page.props.data.total_cost < 0 ? 'text-red-10' : (page.props.data.total_cost > 0 ? 'text-green-10' : '')">
+                        Rp. {{ formatNumber(page.props.data.total_cost) }}
+                      </div>
                     </td>
                   </tr>
                   <tr>
                     <td>Total Harga</td>
                     <td>:</td>
                     <td>
-                      Rp. {{ formatNumber(page.props.data.total_price) }}
+                      <div
+                        :class="page.props.data.total_price < 0 ? 'text-red-10' : (page.props.data.total_price > 0 ? 'text-green-10' : '')">
+                        Rp. {{ formatNumber(page.props.data.total_price) }}
+                      </div>
                     </td>
                   </tr>
                   <tr>
@@ -179,12 +190,43 @@ const computedColumns = computed(() => {
                       <div>
                         Stok Lama: {{ formatNumber(props.row.old_quantity) }} {{ props.row.uom }}<br>
                         Stok Baru: {{ formatNumber(props.row.new_quantity) }} {{ props.row.uom }}<br>
-                        Selisih: {{ formatNumber(props.row.balance) }} {{ props.row.uom }}<br>
-                        Rp. {{ formatNumber(props.row.subtotal_cost) }} / Rp. {{ formatNumber(props.row.subtotal_price)
-                        }}<br>
+
+                        <div
+                          :class="props.row.balance < 0 ? 'text-red-10' : (props.row.balance > 0 ? 'text-green-10' : '')">
+                          Selisih: {{
+                            (props.row.balance > 0 ? '+' : '') + formatNumber(props.row.balance) }} {{ props.row.uom
+                          }}<br>
+                          (Rp. {{ formatNumber(props.row.subtotal_cost) }} / Rp. {{
+                            formatNumber(props.row.subtotal_price) }})
+                        </div>
+                        <br>
                         {{ props.row.notes }}
                       </div>
                     </template>
+                  </q-td>
+                </template>
+                <template v-slot:body-cell-balance="props">
+                  <q-td :props="props">
+                    <div
+                      :class="props.row.balance < 0 ? 'text-red-10' : (props.row.balance > 0 ? 'text-green-10' : '')">
+                      {{ (props.row.balance > 0 ? '+' : '') + formatNumber(props.row.balance) }}
+                    </div>
+                  </q-td>
+                </template>
+                <template v-slot:body-cell-cost_balance="props">
+                  <q-td :props="props">
+                    <div
+                      :class="props.row.balance < 0 ? 'text-red-10' : (props.row.balance > 0 ? 'text-green-10' : '')">
+                      {{ formatNumber(props.row.subtotal_cost) }}
+                    </div>
+                  </q-td>
+                </template>
+                <template v-slot:body-cell-price_balance="props">
+                  <q-td :props="props">
+                    <div
+                      :class="props.row.balance < 0 ? 'text-red-10' : (props.row.balance > 0 ? 'text-green-10' : '')">
+                      {{ formatNumber(props.row.subtotal_price) }}
+                    </div>
                   </q-td>
                 </template>
               </q-table>

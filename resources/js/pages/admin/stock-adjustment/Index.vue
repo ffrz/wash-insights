@@ -117,7 +117,6 @@ const onFilterChange = () => {
 };
 
 const onRowClicked = (row) => {
-  alert(row.id+ ' clicked');
   if (row.status == 'draft')
     router.get(route("admin.stock-adjustment.editor", row.id));
   else
@@ -191,10 +190,10 @@ const computedColumns = computed(() => {
                   <q-chip dense size="sm"
                     :color="props.row.status === 'draft' ? 'orange' : (props.row.status === 'closed' ? 'green' : (props.row.status === 'canceled' ? 'red' : ''))"
                     :icon="props.row.status === 'draft' ? 'emergency' : (props.row.status === 'closed' ? 'check' : (props.row.status === 'canceled' ? 'close' : ''))">{{
-                      $CONSTANTS.WASHORDER_ORDERSTATUSES[props.row.order_status] }}</q-chip>
+                      $CONSTANTS.STOCKADJUSTMENT_STATUSES[props.row.status] }}</q-chip>
                 </div>
                 <div>
-                  <q-icon name="category"/> {{ $CONSTANTS.STOCKADJUSTMENT_TYPES[props.row.type] }}
+                  <q-icon name="category" /> {{ $CONSTANTS.STOCKADJUSTMENT_TYPES[props.row.type] }}
                 </div>
                 <div v-if="props.row.created_by">
                   <q-icon name="person" /> Dibuat: <b>{{ props.row.created_by.username }}</b> <q-icon name="history" />
@@ -204,7 +203,8 @@ const computedColumns = computed(() => {
                   <q-icon name="person" /> Diperbarui: <b>{{ props.row.updated_by.username }}</b> <q-icon
                     name="history" /> {{ $dayjs(new Date(props.row.updated_datetime)).format("DD/MM/YYYY HH:mm") }}
                 </div>
-                <div>
+                <div
+                  :class="props.row.total_cost < 0 ? 'text-red-10' : (props.row.total_cost > 0 ? 'text-green-10' : '')">
                   <q-icon name="money" /> Rp. {{ formatNumber(props.row.total_cost) }} / Rp. {{
                     formatNumber(props.row.total_price) }}
                 </div>
@@ -220,10 +220,16 @@ const computedColumns = computed(() => {
               {{ $CONSTANTS.STOCKADJUSTMENT_TYPES[props.row.type] }}
             </q-td>
             <q-td key="total_cost" :props="props">
-              {{ formatNumber(props.row.total_cost) }}
+              <div
+                :class="props.row.total_cost < 0 ? 'text-red-10' : (props.row.total_cost > 0 ? 'text-green-10' : '')">
+                {{ formatNumber(props.row.total_cost) }}
+              </div>
             </q-td>
             <q-td key="total_price" :props="props">
-              {{ formatNumber(props.row.total_price) }}
+              <div
+                :class="props.row.total_price < 0 ? 'text-red-10' : (props.row.total_price > 0 ? 'text-green-10' : '')">
+                {{ formatNumber(props.row.total_price) }}
+              </div>
             </q-td>
             <q-td key="notes" :props="props">
               {{ props.row.notes }}
