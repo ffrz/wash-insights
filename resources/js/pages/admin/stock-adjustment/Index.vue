@@ -117,6 +117,7 @@ const onFilterChange = () => {
 };
 
 const onRowClicked = (row) => {
+  alert(row.id+ ' clicked');
   if (row.status == 'draft')
     router.get(route("admin.stock-adjustment.editor", row.id));
   else

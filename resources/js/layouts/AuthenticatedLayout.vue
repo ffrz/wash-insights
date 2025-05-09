@@ -175,6 +175,15 @@ onMounted(() => {
             v-if="$page.props.auth.user.role == $CONSTANTS.USER_ROLE_ADMIN || $page.props.auth.user.role == $CONSTANTS.USER_ROLE_CASHIER"
             expand-separator icon="inventory_2" label="Inventori"
             :default-opened="$page.url.startsWith('/admin/products') || $page.url.startsWith('/admin/product-categories')">
+            <q-item class="subnav" clickable v-ripple :active="$page.url.startsWith('/admin/stock-adjustments')"
+              @click="router.get(route('admin.stock-adjustment.index'))">
+              <q-item-section avatar>
+                <q-icon name="swap_vert" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ $t("stock_adjustment") }}</q-item-label>
+              </q-item-section>
+            </q-item>
             <q-item class="subnav" clickable v-ripple :active="$page.url.startsWith('/admin/products')"
               @click="router.get(route('admin.product.index'))">
               <q-item-section avatar>
@@ -191,15 +200,6 @@ onMounted(() => {
               </q-item-section>
               <q-item-section>
                 <q-item-label>{{ $t("product_categories") }}</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item class="subnav" clickable v-ripple :active="$page.url.startsWith('/admin/stock-adjustments')"
-              @click="router.get(route('admin.stock-adjustment.index'))">
-              <q-item-section avatar>
-                <q-icon name="swap_vert" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ $t("stock_adjustment") }}</q-item-label>
               </q-item-section>
             </q-item>
           </q-expansion-item>

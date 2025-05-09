@@ -53,11 +53,12 @@ class StockAdjustmentController extends Controller
 
     public function detail($id = 0)
     {
-        // $item = $this->_findOder($id);
+        $item = StockAdjustment::with(['createdBy', 'updatedBy'])->findOrFail($id);
 
-        // return inertia('admin/stock-adjustment/Detail', [
-        //     'data' => $item
-        // ]);
+        return inertia('admin/stock-adjustment/Detail', [
+            'data' => $item,
+            'details' => $item->details
+        ]);
     }
 
     public function create(Request $request)
@@ -222,10 +223,9 @@ class StockAdjustmentController extends Controller
             // Ambil produk terkait
             $products = Product::whereIn('id', array_keys($details->all()))->get();
 
-            // Restore stock
             foreach ($products as $product) {
                 $detail = $details[$product->id];
-                $product->stock += (-$detail->balance);
+                $product->stock += (-$detail->balance); // refund stok
                 $product->save();
 
                 // Hapus stock movement terkait detail ini

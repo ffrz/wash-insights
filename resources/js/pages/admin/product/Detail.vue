@@ -249,7 +249,7 @@ const computedColumns = computed(() => {
 
               <q-tab-panel name="history">
                 <q-table flat bordered square color="primary"
-                  class="full-height-table full-height-table2 va-top wash-order-list" row-key="id" virtual-scroll
+                  class="full-height-table full-height-table2" row-key="id" virtual-scroll
                   v-model:pagination="pagination" :filter="filter.search" :loading="loading" :columns="computedColumns"
                   :rows="rows" :rows-per-page-options="[10, 25, 50]" @request="fetchItems" binary-state-sort>
                   <template v-slot:loading>
