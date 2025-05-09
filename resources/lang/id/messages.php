@@ -16,6 +16,10 @@ return [
     'technician-updated' => 'Teknisi :name telah diperbarui.',
     'technician-deleted' => 'Teknisi :name telah dihapus.',
 
+    'stock-adjustment-created' => 'Penyesuaian stok #:id telah dibuat.',
+    'stock-adjustment-saved' => 'Penyesuaian stok #:id telah disimpan.',
+    'stock-adjustment-deleted' => 'Penyesuaian stok #:id telah dihapus.',
+
     'service-order-saved' => 'Order Servis #:id telah disimpan.',
     'service-order-deleted' => 'Order Servis #:id telah dihapus.',
 
