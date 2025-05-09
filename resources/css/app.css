@@ -208,7 +208,7 @@ table.detail tr:nth-child(even) td {
 .full-height-table th,
 .full-height-table td {
   padding: 10px;
-  text-align: left;
+  /* text-align: left; */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
