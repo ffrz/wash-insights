@@ -154,6 +154,10 @@ class StockAdjustmentController extends Controller
         $details = $request->post('details', []);
 
         DB::beginTransaction();
+
+        $total_cost = 0;
+        $total_price = 0;
+
         foreach ($details as $d) {
             $detail = StockAdjustmentDetail::find($d['id']);
             $detail->new_quantity = $d['new_quantity'];
@@ -171,18 +175,27 @@ class StockAdjustmentController extends Controller
                 ]);
                 $stockMovement->save();
             }
+
+            $total_cost += $detail->subtotal_cost;
+            $total_price += $detail->subtotal_price;
         }
+
+        $next_url = 'admin.stock-adjustment.editor';
 
         if ($request->post('action') === 'cancel') {
             $item->status = StockAdjustment::Status_Cancelled;
+            $next_url = 'admin.stock-adjustment.index';
         } else if ($request->post('action') === 'close') {
             $item->status = StockAdjustment::Status_Closed;
+            $next_url = 'admin.stock-adjustment.index';
         }
 
+        $item->total_cost = $total_cost;
+        $item->total_price = $total_price;
         $item->save();
         DB::commit();
 
-        return redirect(route('admin.stock-adjustment.editor', [
+        return redirect(route($next_url, [
             'id' => $item->id
         ]),)->with([
             'message' => 'Berhasil Disimpan'

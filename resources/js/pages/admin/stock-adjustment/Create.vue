@@ -93,7 +93,7 @@ const computedColumns = computed(() => {
               </q-table>
             </q-card-section>
             <q-card-section class="q-gutter-sm">
-              <q-btn icon="save" type="submit" label="Simpan" color="primary" :disable="form.processing" />
+              <q-btn icon="play_arrow" type="submit" label="Lanjutkan" color="primary" :disable="form.processing" />
               <q-btn icon="cancel" label="Batal" :disable="form.processing"
                 @click="router.get(route('admin.stock-adjustment.index'))" />
             </q-card-section>

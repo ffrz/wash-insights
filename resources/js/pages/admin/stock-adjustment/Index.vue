@@ -53,14 +53,14 @@ const columns = [
     name: "status",
     label: "Status",
     field: "status",
-    align: "left",
+    align: "center",
     sortable: true,
   },
   {
     name: "type",
     label: "Jenis",
     field: "type",
-    align: "left",
+    align: "center",
     sortable: false,
   },
   {
@@ -117,7 +117,10 @@ const onFilterChange = () => {
 };
 
 const onRowClicked = (row) => {
-  router.get(route("admin.stock-adjustment.detail", row.id));
+  if (row.status == 'draft')
+    router.get(route("admin.stock-adjustment.editor", row.id));
+  else
+    router.get(route("admin.stock-adjustment.detail", row.id));
 };
 
 const $q = useQuasar();
@@ -153,7 +156,7 @@ const computedColumns = computed(() => {
       </q-toolbar>
     </template>
     <div class="q-pa-sm">
-      <q-table flat bordered square color="primary" class="full-height-table va-top stock-adjustment-list" row-key="id"
+      <q-table flat bordered square color="primary" class="full-height-table stock-adjustment-list" row-key="id"
         virtual-scroll v-model:pagination="pagination" :filter="filter.search" :loading="loading"
         :columns="computedColumns" :rows="rows" :rows-per-page-options="[10, 25, 50]" @request="fetchItems"
         binary-state-sort>
@@ -209,7 +212,7 @@ const computedColumns = computed(() => {
             <q-td key="datetime" :props="props">
               {{ $dayjs(new Date(props.row.datetime)).format("DD/MM/YYYY HH:mm") }}
             </q-td>
-            <q-td key="status" :props="props">
+            <q-td key="status" :props="props" class="text-center">
               {{ $CONSTANTS.STOCKADJUSTMENT_STATUSES[props.row.status] }}
             </q-td>
             <q-td key="type" :props="props">
@@ -221,7 +224,7 @@ const computedColumns = computed(() => {
             <q-td key="total_price" :props="props">
               {{ formatNumber(props.row.total_price) }}
             </q-td>
-            <q-td key="status" :props="props">
+            <q-td key="notes" :props="props">
               {{ props.row.notes }}
             </q-td>
             <q-td key="action" :props="props">
@@ -229,13 +232,6 @@ const computedColumns = computed(() => {
                 <q-btn icon="more_vert" dense flat style="height: 40px; width: 30px" @click.stop>
                   <q-menu anchor="bottom right" self="top right" transition-show="scale" transition-hide="scale">
                     <q-list style="width: 200px">
-                      <q-item clickable v-ripple v-close-popup
-                        @click.stop="router.get(route('admin.stock-adjustment.edit', props.row.id))">
-                        <q-item-section avatar>
-                          <q-icon name="edit" />
-                        </q-item-section>
-                        <q-item-section icon="edit">Edit</q-item-section>
-                      </q-item>
                       <q-item @click.stop="deleteItem(props.row)" clickable
                         :disabled="!check_role($CONSTANTS.USER_ROLE_ADMIN)" v-ripple v-close-popup>
                         <q-item-section avatar>
