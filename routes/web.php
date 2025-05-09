@@ -73,8 +73,8 @@ Route::middleware([Auth::class])->group(function () {
         Route::prefix('stock-adjustments')->group(function () {
             Route::get('', [StockAdjustmentController::class, 'index'])->name('admin.stock-adjustment.index');
             Route::get('data', [StockAdjustmentController::class, 'data'])->name('admin.stock-adjustment.data');
-            Route::get('create', [StockAdjustmentController::class, 'editor'])->name('admin.stock-adjustment.create');
-            Route::get('edit/{id}', [StockAdjustmentController::class, 'editor'])->name('admin.stock-adjustment.edit');
+            Route::match(['get', 'post'],'create', [StockAdjustmentController::class, 'create'])->name('admin.stock-adjustment.create');
+            Route::get('editor/{id}', [StockAdjustmentController::class, 'editor'])->name('admin.stock-adjustment.editor');
             Route::post('save', [StockAdjustmentController::class, 'save'])->name('admin.stock-adjustment.save');
             Route::post('delete/{id}', [StockAdjustmentController::class, 'delete'])->name('admin.stock-adjustment.delete');
             Route::get('detail/{id}', [StockAdjustmentController::class, 'detail'])->name('admin.stock-adjustment.detail');

@@ -131,7 +131,7 @@ const computedColumns = computed(() => {
   <i-head :title="title" />
   <authenticated-layout>
     <template #right-button>
-      <q-btn icon="add" dense color="primary" @click="router.get(route('admin.stock-adjustment.add'))" />
+      <q-btn icon="add" dense color="primary" @click="router.get(route('admin.stock-adjustment.create'))" />
       <q-btn class="q-ml-sm" :icon="!showFilter ? 'filter_alt' : 'filter_alt_off'" color="grey" dense
         @click="showFilter = !showFilter" />
     </template>

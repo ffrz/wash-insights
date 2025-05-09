@@ -4,11 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
+use App\Models\Product;
 use App\Models\StockAdjustment;
+use App\Models\StockAdjustmentDetail;
+use App\Models\StockMovement;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class StockAdjustmentController extends Controller
 {
@@ -34,7 +38,7 @@ class StockAdjustmentController extends Controller
         if (!empty($filter['type']) && $filter['type'] != 'all') {
             $q->where('type', '=', $filter['type']);
         }
-        
+
         if (!empty($filter['search'])) {
             $search = $filter['search'];
             $q->where(function ($q) use ($search) {
@@ -49,147 +53,139 @@ class StockAdjustmentController extends Controller
 
     public function detail($id = 0)
     {
-        $item = $this->_findOder($id);
+        // $item = $this->_findOder($id);
 
-        return inertia('admin/stock-adjustment/Detail', [
-            'data' => $item
-        ]);
+        // return inertia('admin/stock-adjustment/Detail', [
+        //     'data' => $item
+        // ]);
     }
 
-    public function duplicate($id)
+    public function create(Request $request)
     {
-        $item = $this->_findOder($id);
-        $item->id = null;
-        $item->created_datetime = null;
-        $item->created_by_uid = null;
-        $item->updated_datetime = null;
-        $item->updated_by_uid = null;
-        $item->closed_datetime = null;
-        $item->closed_by_uid = null;
-        $item->order_status = WashOrder::OrderStatus_Open;
-        $item->service_status = WashOrder::ServiceStatus_Received;
-        $item->repair_status = WashOrder::RepairStatus_NotFinished;
-        $item->payment_status = WashOrder::PaymentStatus_Unpaid;
-        $item->received_datetime = date('Y-m-d H:i:s');
-        $item->checked_datetime = null;
-        $item->worked_datetime = null;
-        $item->completed_datetime = null;
-        $item->picked_datetime = null;
+        if ($request->method() == 'POST') {
+            $product_ids = $request->post('product_ids', []);
+            $products = Product::whereIn('id', $product_ids)->get()->keyBy('id');
 
-        return $this->_renderEditor($item);
-    }
+            DB::beginTransaction();
+            $item = new StockAdjustment([
+                'datetime' => $request->post('datetime', date('Y-m-d H:i:s')),
+                'status' => StockAdjustment::Status_Draft,
+                'type' => $request->post('type', StockAdjustment::Type_StockCorrection),
+                'notes' => $request->post('notes', ''),
+                'total_cost' => 0,
+                'total_price' => 0,
+            ]);
+            $item->save();
 
-    public function editor($id = 0)
-    {
-        $item = $this->_findOder($id);
-        return $this->_renderEditor($item);
-    }
+            foreach ($product_ids as $product_id) {
+                $product = $products[$product_id];
+                $detail = new StockAdjustmentDetail([
+                    'parent_id' => $item->id,
+                    'product_id' => $product_id,
+                    'product_name' => $product->name,
+                    'old_quantity' => $product->stock,
+                    'new_quantity' => $product->stock,
+                    'balance' => 0,
+                    'uom' => $product->uom,
+                    'cost' => $product->cost,
+                    'price' => $product->price,
+                ]);
+                $detail->save();
+            }
 
-    private function _findOder($id)
-    {
-        $order = $id ? WashOrder::with([
-            // 'createdBy:id,username,name',
-            // 'updatedBy:id,username,name',
-            // 'closedBy:id,username,name',
-        ])->findOrFail($id) : new WashOrder([
-            'received_datetime' => date('Y-m-d H:i:s'),
-            'order_status' => WashOrder::OrderStatus_Confirmed,
-            'service_status' => WashOrder::ServiceStatus_NotStarted,
-            'payment_status' => WashOrder::PaymentStatus_Unpaid,
-        ]);
-        // $order->details = [];
+            DB::commit();
 
-        $itemDetail = WashOrderDetail::where('order_id', $order->id)->get();
-        
-        $detailId = 1;
-        foreach ($itemDetail as $detail) {
-            // $order->details[$detailId] = $detail;
-            $order->{'service_' . $detailId} = $detail->service_id;
-            $detailId++;
+            return redirect(route('admin.stock-adjustment.editor', [
+                'id' => $item->id
+            ]))->with([
+                'message' => __('Penyesuaian stok dibuat', ['id' => $item->id])
+            ]);
         }
-        return $order;
+
+        return inertia('admin/stock-adjustment/Create', [
+            'products' => Product::with(['category'])
+                ->where('type', Product::Type_Stocked)
+                ->where('active', 1)
+                ->orderBy('name', 'asc')
+                ->get(['id', 'name', 'type', 'stock', 'uom', 'cost', 'price']),
+        ]);
     }
 
-    private function _renderEditor($item)
+    public function editor($id)
     {
-        $customers = Customer::get(['id', 'name', 'phone', 'address']);
+        $item = StockAdjustment::findOrFail($id);
+
+        $details = DB::table('stock_adjustment_details')
+            ->join('products', 'stock_adjustment_details.product_id', '=', 'products.id')
+            ->where('stock_adjustment_details.parent_id', $id)
+            ->orderBy('stock_adjustment_details.id', 'asc')
+            ->select(
+                'stock_adjustment_details.id',
+                'stock_adjustment_details.new_quantity',
+                'stock_adjustment_details.notes',
+                'products.id as product_id',
+                'products.name as product_name',
+                'products.stock as old_quantity',
+                'products.uom',
+            )
+            ->get();
 
         return inertia('admin/stock-adjustment/Editor', [
-            'data' => $item,
-            'vehicles'  => WashOrder::get(['vehicle_description'])->pluck('vehicle_description')->unique()->values(),
-            'services'  => WashService::get(['id', 'name', 'price']),
-            'operators' => User::where('role', User::Role_Washer)->get(['id', 'name']),
-            'customers' => $customers,
+            'item' => $item,
+            'details' => $details
         ]);
     }
 
     public function save(Request $request)
     {
         $rules = [
-            'customer_name' => 'required|max:255',
-            'customer_phone' => 'required|max:100',
-            'address' => 'nullable|max:1000',
-
-            'vehicle_plate_number' => 'required',
-            'vehicle_description' => 'required',
+            'datetime' => ['required', 'date'], // atau gunakan: 'date_format:Y-m-d H:i:s'
+            'type' => [
+                'required',
+                Rule::in(array_keys(StockAdjustment::Types)),
+            ],
+            'notes' => 'nullable|string|max:1000',
         ];
-        $item = null;
-        $fields = [
-            'customer_id',
-            'customer_name',
-            'customer_phone',
-            'customer_address',
-            'vehicle_plate_number',
-            'vehicle_description',
-            'order_status',
-            'service_status',
-            'payment_status',
-            'total_price',
-            'notes'
-        ];
+        $validated = $request->validate($rules);
 
-        $request->validate($rules);
+        $item = StockAdjustment::findOrFail($request->id);
+        $item->fill($validated);
 
-        $data = $request->only($fields);
-        $data['notes'] = $data['notes'] ?? '';
-        $data['total_price'] = $data['total_price'] ?? 0;
+        $details = $request->post('details', []);
 
-        if (!$request->id) {
-            $item = new WashOrder();
-        } else {
-            $item = WashOrder::findOrFail($request->post('id', 0));
+        DB::beginTransaction();
+        foreach ($details as $d) {
+            $detail = StockAdjustmentDetail::find($d['id']);
+            $detail->new_quantity = $d['new_quantity'];
+            $detail->balance = $detail->new_quantity - $detail->old_quantity;
+            $detail->subtotal_cost = $detail->balance * $detail->cost;
+            $detail->subtotal_price = $detail->balance * $detail->price;
+            $detail->save();
+
+            if ($request->post('action') === 'close') {
+                $stockMovement = new StockMovement([
+                    'product_id' => $detail->product_id,
+                    'ref_id' => $detail->id,
+                    'ref_type' => StockMovement::RefType_StockAdjustment,
+                    'quantity' => $detail->balance,
+                ]);
+                $stockMovement->save();
+            }
         }
 
-        DB::transaction(function () use ($data, $item, $request) {
-            if (!$data['customer_id']) {
-                $customer = Customer::create([
-                    'name' => $request->input('customer_name'),
-                    'phone' => $request->input('customer_phone'),
-                    'address' => $request->input('customer_address'),
-                ]);
-                $data['customer_id'] = $customer->id;
-            }
+        if ($request->post('action') === 'cancel') {
+            $item->status = StockAdjustment::Status_Cancelled;
+        } else if ($request->post('action') === 'close') {
+            $item->status = StockAdjustment::Status_Closed;
+        }
 
-            $item->fill($data);
-            $item->save();
+        $item->save();
+        DB::commit();
 
-            for ($i = 1; $i <= 5; $i++) {
-                $serviceId = $request->input('service_' . $i);
-                if ($serviceId) {
-                    $orderDetail = new WashOrderDetail([
-                        'id' => $i,
-                        'order_id' => $item->id,
-                        'service_id' => $serviceId,
-                        'operator_id' => $request->input('operator_' . $i),
-                        'price' => WashService::where('id', $serviceId)->value('price'),
-                    ]);
-                    $orderDetail->save();
-                }
-            }
-        });
-
-        return redirect(route('admin.stock-adjustment.index'))->with([
-            'message' => __('messages.stock-adjustment-saved', ['id' => $item->id])
+        return redirect(route('admin.stock-adjustment.editor', [
+            'id' => $item->id
+        ]),)->with([
+            'message' => 'Berhasil Disimpan'
         ]);
     }
 
@@ -197,8 +193,41 @@ class StockAdjustmentController extends Controller
     {
         allowed_roles([User::Role_Admin]);
 
-        $item = WashOrder::findOrFail($id);
-        $item->delete();
+        $item = StockAdjustment::findOrFail($id);
+
+        // TODO:
+        // jika statusnya selesai, maka stock akan dikembalikan
+        // yaitu menjumlahkan stok aktual dengan stok yang dikurangi atau ditambah
+        // pada penyesuaian stok ini
+        // hapus juga semua data di stock_movements
+
+        if ($item->status == StockAdjustment::Status_Closed) {
+            DB::beginTransaction();
+
+            $details = StockAdjustmentDetail::where('parent_id', $item->id)->get()->byKey('product_id');
+
+            $products = Product::whereIn('id', array_keys($details))->get();
+
+            foreach ($products as $product) {
+                $product->stock += $details[$product->id]->quantity;
+            }
+
+            // foreach ($details as $detail) {
+            //     DB::query('DELETE FROM stock_movements where ref_type=? and ref_id=?', [
+            //         StockMovement::RefType_StockAdjustment,
+            //         $detail->id,
+            //     ]);
+            // }
+
+            // stock movement history juga perlu dihapus dong!
+            // foreach ($details as $detail) {
+
+            //     $detail->delete();
+            // }
+            $item->delete();
+
+            DB::commit();
+        }
 
         return response()->json([
             'message' => __('messages.stock-adjustment-deleted', ['id' => $item->id])

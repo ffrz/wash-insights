@@ -23,12 +23,14 @@ class StockMovement extends Model
     /**
      * Reference types.
      */
-    const RefType_InitialStock = 'initial_stock';
+    const RefType_InitialStock     = 'initial_stock';
     const RefType_ManualAdjustment = 'manual_adjustment';
+    const RefType_StockAdjustment  = 'stock_adjustment';
 
     const RefTypes = [
-        self::RefType_InitialStock => 'Stok Awal',
+        self::RefType_InitialStock     => 'Stok Awal',
         self::RefType_ManualAdjustment => 'Penyesuaian Manual',
+        self::RefType_StockAdjustment  => 'Penyesuaian Stok'
     ];
 
     public function createdBy()
