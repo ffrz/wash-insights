@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Product;
+use App\Models\StockAdjustment;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,7 +17,8 @@ return new class extends Migration
             $table->id();
 
             $table->datetime('datetime')->nullable()->default(null);
-            $table->enum('type', ['opnames', 'corrections', 'lost', 'internal_use']);
+            $table->enum('status', array_keys(StockAdjustment::Statuses))->default(StockAdjustment::Status_Draft);
+            $table->enum('type', array_keys(StockAdjustment::Types))->default(StockAdjustment::Type_StockCorrection);
             $table->text('notes')->nullable()->default(null);
             $table->decimal('total_cost', 15, 4)->nullable()->default(null);
             $table->decimal('total_price', 15, 4)->nullable()->default(null);

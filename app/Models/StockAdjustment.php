@@ -10,6 +10,7 @@ class StockAdjustment extends Model
 
     protected $fillable = [
         'datetime',
+        'status',
         'type',
         'total_cost',
         'total_price',
@@ -17,12 +18,18 @@ class StockAdjustment extends Model
     ];
 
     // === Type ===
-    public const Type_StockOpname     = 'stock_opname';
-    public const Type_StockCorrection  = 'stock_correction';
+    public const Type_StockOpname       = 'stock_opname';
+    public const Type_StockCorrection   = 'stock_correction';
+    public const Type_Lost              = 'lost';
+    public const Type_InternalUse       = 'internal_use';
+    public const Type_Expired           = 'expired';
 
     public const Types = [
-        self::Type_StockOpname     => 'Stok Opname',
+        self::Type_StockOpname      => 'Stok Opname',
         self::Type_StockCorrection  => 'Koreksi Stok',
+        self::Type_Lost             => 'Hilang',
+        self::Type_InternalUse      => 'Penggunaan Internal',
+        self::Type_Expired          => 'Kedaluwasa',
     ];
 
     // === Status ===

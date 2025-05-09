@@ -2,7 +2,7 @@
 import { computed, onMounted, reactive, ref } from "vue";
 import { router, usePage } from "@inertiajs/vue3";
 import { handleDelete, handleFetchItems } from "@/helpers/client-req-handler";
-import { create_options, check_role, getQueryParams } from "@/helpers/utils";
+import { create_options, check_role, getQueryParams, formatNumber } from "@/helpers/utils";
 import { useQuasar } from "quasar";
 
 const title = "Penyesuaian Stok";
@@ -12,23 +12,18 @@ const showFilter = ref(false);
 
 const filter = reactive({
   search: "",
-  order_status: "all",
-  payment_status: "all",
-  service_status: "all",
+  status: "all",
+  type: "all",
   ...getQueryParams()
 });
 
-const order_statuses = [
+const statuses = [
   { value: "all", label: "Semua" },
-  ...create_options(window.CONSTANTS.WASHORDER_ORDERSTATUSES),
+  ...create_options(window.CONSTANTS.STOCKADJUSTMENT_STATUSES),
 ];
-const service_statuses = [
+const types = [
   { value: "all", label: "Semua" },
-  ...create_options(window.CONSTANTS.WASHORDER_SERVICESTATUSES),
-];
-const payment_statuses = [
-  { value: "all", label: "Semua" },
-  ...create_options(window.CONSTANTS.WASHORDER_PAYMENTSTATUSES),
+  ...create_options(window.CONSTANTS.STOCKADJUSTMENT_TYPES),
 ];
 
 const pagination = ref({
@@ -41,25 +36,53 @@ const pagination = ref({
 
 const columns = [
   {
-    name: "order",
-    label: "Order",
-    field: "order",
+    name: "id",
+    label: "ID",
+    field: "id",
     align: "left",
     sortable: true,
   },
   {
-    name: "vehicle",
-    label: "Kendaraan",
-    field: "vehicle",
+    name: "datetime",
+    label: "Waktu",
+    field: "datetime",
     align: "left",
     sortable: true,
   },
   {
-    name: "customer",
-    label: "Pelanggan",
-    field: "customer",
+    name: "status",
+    label: "Status",
+    field: "status",
     align: "left",
     sortable: true,
+  },
+  {
+    name: "type",
+    label: "Jenis",
+    field: "type",
+    align: "left",
+    sortable: false,
+  },
+  {
+    name: "total_cost",
+    label: "Total Modal",
+    field: "total_cost",
+    align: "right",
+    sortable: false,
+  },
+  {
+    name: "total_price",
+    label: "Total Harga",
+    field: "total_price",
+    align: "right",
+    sortable: false,
+  },
+  {
+    name: "notes",
+    label: "Notes",
+    field: "notes",
+    align: "left",
+    sortable: false,
   },
   {
     name: "action",
@@ -74,7 +97,7 @@ onMounted(() => {
 const deleteItem = (row) =>
   handleDelete({
     message: `Hapus order #${row.id}?`,
-    url: route("admin.wash-order.delete", row.id),
+    url: route("admin.stock-adjustment.delete", row.id),
     fetchItemsCallback: fetchItems,
     loading,
   });
@@ -85,7 +108,7 @@ const fetchItems = (props = null) =>
     filter,
     props,
     rows,
-    url: route("admin.wash-order.data"),
+    url: route("admin.stock-adjustment.data"),
     loading,
   });
 
@@ -94,13 +117,13 @@ const onFilterChange = () => {
 };
 
 const onRowClicked = (row) => {
-  router.get(route("admin.wash-order.detail", row.id));
+  router.get(route("admin.stock-adjustment.detail", row.id));
 };
 
 const $q = useQuasar();
 const computedColumns = computed(() => {
   if ($q.screen.gt.sm) return columns;
-  return columns.filter((col) => col.name === "order" || col.name === "action");
+  return columns.filter((col) => col.name === "id" || col.name === "action");
 });
 </script>
 
@@ -108,66 +131,20 @@ const computedColumns = computed(() => {
   <i-head :title="title" />
   <authenticated-layout>
     <template #right-button>
-      <q-btn
-        icon="add"
-        dense
-        color="primary"
-        @click="router.get(route('admin.wash-order.add'))"
-      />
-      <q-btn
-        class="q-ml-sm"
-        :icon="!showFilter ? 'filter_alt' : 'filter_alt_off'"
-        color="grey"
-        dense
-        @click="showFilter = !showFilter"
-      />
+      <q-btn icon="add" dense color="primary" @click="router.get(route('admin.stock-adjustment.add'))" />
+      <q-btn class="q-ml-sm" :icon="!showFilter ? 'filter_alt' : 'filter_alt_off'" color="grey" dense
+        @click="showFilter = !showFilter" />
     </template>
     <template #title>{{ title }}</template>
     <template #header v-if="showFilter">
       <q-toolbar class="filter-bar">
         <div class="row q-col-gutter-xs items-center q-pa-sm full-width">
-          <q-select
-            v-model="filter.order_status"
-            :options="order_statuses"
-            label="Status Pesanan"
-            dense
-            map-options
-            class="custom-select col-xs-12 col-sm-2"
-            emit-value
-            outlined
-            @update:model-value="onFilterChange"
-          />
-          <q-select
-            v-model="filter.service_status"
-            :options="service_statuses"
-            label="Status Cuci"
-            dense
-            class="custom-select col-xs-12 col-sm-2"
-            map-options
-            emit-value
-            outlined
-            @update:model-value="onFilterChange"
-          />
-          <q-select
-            v-model="filter.payment_status"
-            :options="payment_statuses"
-            label="Status Pembayaran"
-            dense
-            class="custom-select col-xs-12 col-sm-2"
-            map-options
-            emit-value
-            outlined
-            @update:model-value="onFilterChange"
-          />
-          <q-input
-            class="col"
-            outlined
-            dense
-            debounce="300"
-            v-model="filter.search"
-            placeholder="Cari"
-            clearable
-          >
+          <q-select v-model="filter.status" :options="statuses" label="Status" dense map-options
+            class="custom-select col-xs-12 col-sm-2" emit-value outlined @update:model-value="onFilterChange" />
+          <q-select v-model="filter.type" :options="types" label="Jenis" dense class="custom-select col-xs-12 col-sm-2"
+            map-options emit-value outlined @update:model-value="onFilterChange" />
+
+          <q-input class="col" outlined dense debounce="300" v-model="filter.search" placeholder="Cari" clearable>
             <template v-slot:append>
               <q-icon name="search" />
             </template>
@@ -176,23 +153,10 @@ const computedColumns = computed(() => {
       </q-toolbar>
     </template>
     <div class="q-pa-sm">
-      <q-table
-        flat
-        bordered
-        square
-        color="primary"
-        class="full-height-table va-top wash-order-list"
-        row-key="id"
-        virtual-scroll
-        v-model:pagination="pagination"
-        :filter="filter.search"
-        :loading="loading"
-        :columns="computedColumns"
-        :rows="rows"
-        :rows-per-page-options="[10, 25, 50]"
-        @request="fetchItems"
-        binary-state-sort
-      >
+      <q-table flat bordered square color="primary" class="full-height-table va-top stock-adjustment-list" row-key="id"
+        virtual-scroll v-model:pagination="pagination" :filter="filter.search" :loading="loading"
+        :columns="computedColumns" :rows="rows" :rows-per-page-options="[10, 25, 50]" @request="fetchItems"
+        binary-state-sort>
         <template v-slot:loading>
           <q-inner-loading showing color="red" />
         </template>
@@ -202,102 +166,78 @@ const computedColumns = computed(() => {
             <q-icon size="2em" name="sentiment_dissatisfied" />
             <span>
               {{ message }}
-              {{ filter ? " with term " + filter : "" }}</span
-            >
+              {{ filter ? " with term " + filter : "" }}</span>
             <q-icon size="2em" :name="filter ? 'filter_b_and_w' : icon" />
           </div>
         </template>
 
         <template v-slot:body="props">
-          <q-tr
-            :props="props"
-            @click="onRowClicked(props.row)"
-            class="cursor-pointer"
-          >
-            <q-td key="order" :props="props">
-              <div class="flex q-gutter-xs">
-                <div><b>#{{ props.row.id }}</b></div>
-                <div>{{ $dayjs(new Date(props.row.order_created_at)).format("DD/MM/YYYY HH:mm") }}</div>
-                <q-chip dense size="sm"
-                  :color="props.row.order_status === 'pending' ? 'orange'    : (props.row.order_status === 'confirmed' ? 'grey'  : (props.row.order_status === 'completed' ? 'green'  : 'red'))"
-                   :icon="props.row.order_status === 'pending' ? 'emergency' : (props.row.order_status === 'confirmed' ? 'check' : (props.row.order_status === 'completed' ? 'done_all'  : 'close'))"
-                >{{ $CONSTANTS.WASHORDER_ORDERSTATUSES[props.row.order_status] }}</q-chip>
-              </div>
-              <template v-if="$q.screen.lt.md">
+          <q-tr :props="props" @click="onRowClicked(props.row)" class="cursor-pointer">
+            <q-td key="id" :props="props">
+              <template v-if="!$q.screen.lt.md">
+                <div class="flex q-gutter-xs">
+                  <div><b>#{{ props.row.id }}</b></div>
+                </div>
+              </template>
+              <template v-else>
                 <div class="flex q-col-gutter-xs">
-                  <div><q-icon name="pin" /> <b>{{ props.row.vehicle_plate_number }}</b></div>
-                  <div><q-icon name="directions_car" /> {{ props.row.vehicle_description }}</div>
+                  <div><b>#{{ props.row.id }}</b></div>
+                  <div><q-icon name="history" /> {{ $dayjs(new Date(props.row.datetime)).format("DD/MM/YYYY HH:mm") }}
+                  </div>
+                  <q-chip dense size="sm"
+                    :color="props.row.status === 'draft' ? 'orange' : (props.row.status === 'closed' ? 'green' : (props.row.status === 'canceled' ? 'red' : ''))"
+                    :icon="props.row.status === 'draft' ? 'emergency' : (props.row.status === 'closed' ? 'check' : (props.row.status === 'canceled' ? 'close' : ''))">{{
+                      $CONSTANTS.WASHORDER_ORDERSTATUSES[props.row.order_status] }}</q-chip>
                 </div>
-                <div class="flex q-col-gutter-xs q-py-xs">
-                  <div><q-icon name="person" /> <b>{{ props.row.customer_name }}</b></div>
-                  <div><q-icon name="phone" /> {{ props.row.customer_phone }}</div>
-                  <div><q-icon name="location_home" /> {{ props.row.customer_address }}</div>
+                <div>
+                  <q-icon name="category"/> {{ $CONSTANTS.STOCKADJUSTMENT_TYPES[props.row.type] }}
                 </div>
-                <div class="flex q-col-gutter-xs q-py-xs">
-                  <q-chip dense icon="soap">{{ $CONSTANTS.WASHORDER_SERVICESTATUSES[props.row.service_status] }}</q-chip>
-                  <q-chip dense icon="payments">{{ $CONSTANTS.WASHORDER_PAYMENTSTATUSES[props.row.payment_status] }}</q-chip>
+                <div v-if="props.row.created_by">
+                  <q-icon name="person" /> Dibuat: <b>{{ props.row.created_by.username }}</b> <q-icon name="history" />
+                  {{ $dayjs(new Date(props.row.created_datetime)).format("DD/MM/YYYY HH:mm") }}
+                </div>
+                <div v-if="props.row.updated_by">
+                  <q-icon name="person" /> Diperbarui: <b>{{ props.row.updated_by.username }}</b> <q-icon
+                    name="history" /> {{ $dayjs(new Date(props.row.updated_datetime)).format("DD/MM/YYYY HH:mm") }}
+                </div>
+                <div>
+                  <q-icon name="money" /> Rp. {{ formatNumber(props.row.total_cost) }} / Rp. {{
+                    formatNumber(props.row.total_price) }}
                 </div>
               </template>
             </q-td>
-            <q-td key="vehicle" :props="props">
-              <div><q-icon name="devices" /> <b>{{ props.row.vehicle_plate_number }}</b></div>
-              <div><q-icon name="report" /> {{ props.row.vehicle_description }}</div>
-              <div><q-icon name="task" /> {{ props.row.actions }}</div>
+            <q-td key="datetime" :props="props">
+              {{ $dayjs(new Date(props.row.datetime)).format("DD/MM/YYYY HH:mm") }}
             </q-td>
-            <q-td key="customer" :props="props">
-              <div><q-icon name="person" /> <b>{{ props.row.customer_name }}</b></div>
-              <div><q-icon name="phone" /> {{ props.row.customer_phone }}</div>
-              <div><q-icon name="location_home" /> {{ props.row.customer_address }}</div>
+            <q-td key="status" :props="props">
+              {{ $CONSTANTS.STOCKADJUSTMENT_STATUSES[props.row.status] }}
             </q-td>
-            <q-td key="status" :props="props"> </q-td>
-            <q-td
-              key="action"
-              :props="props"
-            >
+            <q-td key="type" :props="props">
+              {{ $CONSTANTS.STOCKADJUSTMENT_TYPES[props.row.type] }}
+            </q-td>
+            <q-td key="total_cost" :props="props">
+              {{ formatNumber(props.row.total_cost) }}
+            </q-td>
+            <q-td key="total_price" :props="props">
+              {{ formatNumber(props.row.total_price) }}
+            </q-td>
+            <q-td key="status" :props="props">
+              {{ props.row.notes }}
+            </q-td>
+            <q-td key="action" :props="props">
               <div class="flex justify-end">
-                <q-btn
-                  icon="more_vert"
-                  dense
-                  flat
-                  style="height: 40px; width: 30px"
-                  @click.stop
-                >
-                  <q-menu
-                    anchor="bottom right"
-                    self="top right"
-                    transition-show="scale"
-                    transition-hide="scale"
-                  >
+                <q-btn icon="more_vert" dense flat style="height: 40px; width: 30px" @click.stop>
+                  <q-menu anchor="bottom right" self="top right" transition-show="scale" transition-hide="scale">
                     <q-list style="width: 200px">
-                      <q-item
-                        clickable
-                        v-ripple
-                        v-close-popup
-                        @click.stop="router.get(route('admin.wash-order.duplicate', props.row.id))"
-                      >
-                        <q-item-section avatar>
-                          <q-icon name="file_copy" />
-                        </q-item-section>
-                        <q-item-section icon="copy"> Duplikat </q-item-section>
-                      </q-item>
-                      <q-item
-                        clickable
-                        v-ripple
-                        v-close-popup
-                        @click.stop="router.get(route('admin.wash-order.edit', props.row.id))"
-                      >
+                      <q-item clickable v-ripple v-close-popup
+                        @click.stop="router.get(route('admin.stock-adjustment.edit', props.row.id))">
                         <q-item-section avatar>
                           <q-icon name="edit" />
                         </q-item-section>
                         <q-item-section icon="edit">Edit</q-item-section>
                       </q-item>
-                      <q-item
-                        @click.stop="deleteItem(props.row)"
-                        clickable
-                        :disabled="!check_role($CONSTANTS.USER_ROLE_ADMIN)"
-                        v-ripple
-                        v-close-popup
-                      >
+                      <q-item @click.stop="deleteItem(props.row)" clickable
+                        :disabled="!check_role($CONSTANTS.USER_ROLE_ADMIN)" v-ripple v-close-popup>
                         <q-item-section avatar>
                           <q-icon name="delete_forever" />
                         </q-item-section>

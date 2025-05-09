@@ -4,10 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
+use App\Models\StockAdjustment;
 use App\Models\User;
-use App\Models\WashOrder;
-use App\Models\WashOrderDetail;
-use App\Models\WashService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -26,29 +24,21 @@ class StockAdjustmentController extends Controller
         $orderType = $request->get('order_type', 'desc');
         $filter = $request->get('filter', []);
 
-        $q = WashOrder::query();
+        $q = StockAdjustment::with(['createdBy:id,username,name', 'updatedBy:id,username,name']);
         $q->orderBy($orderBy, $orderType);
 
-        if (!empty($filter['order_status']) && $filter['order_status'] != 'all') {
-            $q->where('order_status', '=', $filter['order_status']);
+        if (!empty($filter['status']) && $filter['status'] != 'all') {
+            $q->where('status', '=', $filter['status']);
         }
 
-        if (!empty($filter['service_status']) && $filter['service_status'] != 'all') {
-            $q->where('service_status', '=', $filter['service_status']);
+        if (!empty($filter['type']) && $filter['type'] != 'all') {
+            $q->where('type', '=', $filter['type']);
         }
-
-        if (!empty($filter['payment_status']) && $filter['payment_status'] != 'all') {
-            $q->where('payment_status', '=', $filter['payment_status']);
-        }
-
+        
         if (!empty($filter['search'])) {
             $search = $filter['search'];
             $q->where(function ($q) use ($search) {
-                $q->where('customer_name', 'like', '%' . $search . '%');
-                $q->orWhere('customer_phone', 'like', '%' . $search . '%');
-                $q->orWhere('customer_address', 'like', '%' . $search . '%');
-                $q->orWhere('vehicle_plate_number', 'like', '%' . $search . '%');
-                $q->orWhere('vehicle_description', 'like', '%' . $search . '%');
+                $q->where('notes', 'like', '%' . $search . '%');
             });
         }
 
