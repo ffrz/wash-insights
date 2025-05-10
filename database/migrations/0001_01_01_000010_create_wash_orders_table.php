@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('wash_orders', function (Blueprint $table) {
             $table->id();
             
-            $table->unsignedBigInteger('customer_id')->nullable()->default(null);
+            $table->unsignedBigInteger('customer_id')->nullable();
             $table->string('customer_name')->nullable()->default('');
             $table->string('customer_phone')->nullable()->default('');
             $table->string('customer_address')->nullable()->default('');
@@ -35,12 +35,12 @@ return new class extends Migration
             // $table->enum('delivery_status', WashOrder::DeliveryStatuses)->default(WashOrder::DeliveryStatus_NotRequired);
 
             $table->decimal('total_price', 10, 2)->nullable()->default(0);
-            $table->text('notes')->nullable()->default(null);
+            $table->text('notes')->nullable();
 
-            $table->datetime('created_datetime')->nullable()->default(null);
-            $table->datetime('updated_datetime')->nullable()->default(null);
-            $table->unsignedBigInteger('created_by_uid')->nullable()->default(null);
-            $table->unsignedBigInteger('updated_by_uid')->nullable()->default(null);
+            $table->datetime('created_datetime')->nullable();
+            $table->datetime('updated_datetime')->nullable();
+            $table->unsignedBigInteger('created_by_uid')->nullable();
+            $table->unsignedBigInteger('updated_by_uid')->nullable();
             $table->foreign('created_by_uid')->references('id')->on('users')->onDelete('set null');
             $table->foreign('updated_by_uid')->references('id')->on('users')->onDelete('set null');
         });

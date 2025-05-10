@@ -15,10 +15,10 @@ return new class extends Migration
         Schema::create('wash_order_details', function (Blueprint $table) {
             $table->unsignedTinyInteger('id');
             $table->unsignedBigInteger('order_id');
-            $table->unsignedBigInteger('operator_id')->nullable()->default(null);
-            $table->unsignedBigInteger('service_id')->nullable()->default(null);
+            $table->unsignedBigInteger('operator_id')->nullable();
+            $table->unsignedBigInteger('service_id')->nullable();
             $table->decimal('price', 8, 2)->nullable()->default(0);
-            $table->text('notes')->nullable()->default(null);
+            $table->text('notes')->nullable();
 
             $table->primary(['order_id', 'id']);
 

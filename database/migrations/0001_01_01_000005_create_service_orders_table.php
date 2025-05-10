@@ -22,12 +22,12 @@ return new class extends Migration
             $table->enum('repair_status', array_keys(ServiceOrder::RepairStatuses))->default(ServiceOrder::RepairStatus_NotFinished);
 
             // order
-            $table->datetime('created_datetime')->nullable()->default(null);
-            $table->unsignedBigInteger('created_by_uid')->nullable()->default(null);
-            $table->datetime('closed_datetime')->nullable()->default(null);
-            $table->unsignedBigInteger('closed_by_uid')->nullable()->default(null);
-            $table->datetime('updated_datetime')->nullable()->default(null);
-            $table->unsignedBigInteger('updated_by_uid')->nullable()->default(null);
+            $table->datetime('created_datetime')->nullable();
+            $table->unsignedBigInteger('created_by_uid')->nullable();
+            $table->datetime('closed_datetime')->nullable();
+            $table->unsignedBigInteger('closed_by_uid')->nullable();
+            $table->datetime('updated_datetime')->nullable();
+            $table->unsignedBigInteger('updated_by_uid')->nullable();
 
             // customer info
             $table->unsignedBigInteger('customer_id')->nullable(true)->default(null);
@@ -44,14 +44,14 @@ return new class extends Migration
             // service info
             $table->string('problems', 200);
             $table->string('actions', 200);
-            $table->dateTime('received_datetime')->nullable()->default(null);
-            $table->dateTime('checked_datetime')->nullable()->default(null);
-            $table->dateTime('worked_datetime')->nullable()->default(null);
-            $table->dateTime('completed_datetime')->nullable()->default(null);
-            $table->dateTime('picked_datetime')->nullable()->default(null);
+            $table->dateTime('received_datetime')->nullable();
+            $table->dateTime('checked_datetime')->nullable();
+            $table->dateTime('worked_datetime')->nullable();
+            $table->dateTime('completed_datetime')->nullable();
+            $table->dateTime('picked_datetime')->nullable();
 
             // garansi boleh dimulai sejak tanggal selesai, tapi perlu ada field tersendiri
-            $table->date('warranty_start_date')->nullable()->default(null);
+            $table->date('warranty_start_date')->nullable();
             $table->unsignedSmallInteger('warranty_day_count')->default(0); // jumlah hari garansi
 
             // cost and payment

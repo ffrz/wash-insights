@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('settings', function (Blueprint $table) {
             $table->string('key')->primary();
             $table->text('value');
-            $table->datetime('created_datetime')->nullable()->default(null);
-            $table->datetime('updated_datetime')->nullable()->default(null);
-            $table->unsignedBigInteger('created_by_uid')->nullable()->default(null);
-            $table->unsignedBigInteger('updated_by_uid')->nullable()->default(null);
+            $table->datetime('created_datetime')->nullable();
+            $table->datetime('updated_datetime')->nullable();
+            $table->unsignedBigInteger('created_by_uid')->nullable();
+            $table->unsignedBigInteger('updated_by_uid')->nullable();
             $table->foreign('created_by_uid')->references('id')->on('users')->onDelete('set null');
             $table->foreign('updated_by_uid')->references('id')->on('users')->onDelete('set null');
         });

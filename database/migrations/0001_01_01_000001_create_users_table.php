@@ -20,9 +20,9 @@ return new class extends Migration
             $table->string('password');
             $table->enum('role', array_keys(User::Roles));
             $table->boolean('active')->default(false);
-            $table->datetime('last_login_datetime')->nullable()->default(null);
+            $table->datetime('last_login_datetime')->nullable();
             $table->string('last_activity_description')->default('');
-            $table->datetime('last_activity_datetime')->nullable()->default(null);
+            $table->datetime('last_activity_datetime')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
